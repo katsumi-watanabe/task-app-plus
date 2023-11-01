@@ -12,8 +12,7 @@ class CategoryController extends Controller
 {
     protected $validator;
     protected $modifiableColumns;
-    protected $listPageColumns = ['id', 'name'];
-    protected $otherPageColumns = ['id', 'name', 'deleted_at'];
+    protected $CategoryColumns = ['id', 'name'];
 
     public function __construct() {
         $this->modifiableColumns = (new Category)->getFillable();
@@ -25,14 +24,14 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $categories = Category::select($this->listPageColumns)->get();
+        $categories = Category::select($this->CategoryColumns)->get();
 
         return compact('categories');
     }
 
     public function show($id)
     {
-        $category = Category::select($this->otherPageColumns)->findOrFail($id);
+        $category = Category::select($this->CategoryColumns)->findOrFail($id);
 
         return compact('category');
     }
@@ -43,6 +42,8 @@ class CategoryController extends Controller
         $request->merge([
             'name' => 'カテゴリ名',
         ]);
+
+        $request->validate($this->validator);
 
         $data = $request->only($this->modifiableColumns);
         $category = Category::create($data);
@@ -56,6 +57,8 @@ class CategoryController extends Controller
         $request->merge([
             'name' => '更新カテゴリ名',
         ]);
+
+        $request->validate($this->validator);
 
         $category = Category::findOrFail($id);
         DB::transaction(function () use ($request, $category) {

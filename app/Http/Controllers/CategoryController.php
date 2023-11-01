@@ -15,11 +15,11 @@ class CategoryController extends Controller
     protected $CategoryColumns = ['id', 'name'];
 
     public function __construct() {
-        $this->modifiableColumns = (new Category)->getFillable();
-
         $this->validator = [
             'name' => 'required',
         ];
+
+        $this->modifiableColumns = (new Category)->getFillable();
     }
 
     public function index(Request $request)
@@ -27,13 +27,6 @@ class CategoryController extends Controller
         $categories = Category::select($this->CategoryColumns)->get();
 
         return compact('categories');
-    }
-
-    public function show($id)
-    {
-        $category = Category::select($this->CategoryColumns)->findOrFail($id);
-
-        return compact('category');
     }
 
     public function store(Request $request)
@@ -47,6 +40,13 @@ class CategoryController extends Controller
 
         $data = $request->only($this->modifiableColumns);
         $category = Category::create($data);
+
+        return compact('category');
+    }
+
+    public function show($id)
+    {
+        $category = Category::select($this->CategoryColumns)->findOrFail($id);
 
         return compact('category');
     }

@@ -16,12 +16,12 @@ class TaskController extends Controller
     protected $otherPageColumns = ['id', 'title', 'category_id', 'description'];
 
     public function __construct() {
-        $this->modifiableColumns = (new Task)->getFillable();
-
         $this->validator = [
             'category_id' => 'required',
             'title' => 'required',
         ];
+
+        $this->modifiableColumns = (new Task)->getFillable();
     }
 
     public function index(Request $request)
@@ -42,14 +42,6 @@ class TaskController extends Controller
         return compact('tasks', 'categories');
     }
 
-    public function show($id)
-    {
-        $task = Task::with('memos')->select($this->otherPageColumns)->findOrFail($id);
-        $categories = Category::getCategoryList();
-
-        return compact('task', 'categories');
-    }
-
     public function store(Request $request)
     {
         // 動作検証用
@@ -66,6 +58,14 @@ class TaskController extends Controller
         $task = Task::create($data);
 
         return compact('task');
+    }
+
+    public function show($id)
+    {
+        $task = Task::with('memos')->select($this->otherPageColumns)->findOrFail($id);
+        $categories = Category::getCategoryList();
+
+        return compact('task', 'categories');
     }
 
     public function update(Request $request, $id)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MemoController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function (){
     Route::resource('tasks', TaskController::class)
+    ->except(['create', 'edit']);
+    Route::resource('tasks/{task}/memos', MemoController::class)
     ->except(['create', 'edit']);
     Route::resource('categories', CategoryController::class)
     ->except(['create', 'edit']);

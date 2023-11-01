@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
-    protected $modifiableColumns ;
-    protected $listPageColumns;
-    protected $otherPageColumns;
+    protected $modifiableColumns;
+    protected $listPageColumns = ['id', 'title', 'category_id', 'description', 'due_date', 'completed_at'];
+    protected $otherPageColumns = ['id', 'title', 'category_id', 'description'];
 
     public function __construct() {
         $this->modifiableColumns = (new Task)->getFillable();
-        $this->listPageColumns = ['id', 'title', 'category_id', 'description', 'due_date', 'completed_at'];
-        $this->otherPageColumns = ['id', 'title', 'category_id', 'description'];
     }
 
     public function index(Request $request)
@@ -27,7 +25,7 @@ class TaskController extends Controller
         // ここに絞り込みの処理を追加します。
         // $request->input('search') ? $q->whereNotNull('completed_at') : $q;
 
-        $tasks = $q->with(['category' => fn($query) => $query->select('id', 'name')])
+        $tasks = $q->with(['category:id,name'])
                 ->withCount('memos')
                 ->select($this->listPageColumns)
                 ->orderByDefault()
@@ -48,10 +46,11 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
+        // 動作検証用
         $request->merge([
             'title' => '手動タイトル',
             'description' => '手動内容',
-            "due_date" => "2023-11-05",
+            'due_date' => '2023-11-05',
             'category_id' => 1
         ]);
 
@@ -62,10 +61,11 @@ class TaskController extends Controller
 
     public function update(Request $request, $id)
     {
+        // 動作検証用
         $request->merge([
             'title' => '更新タイトル',
             'description' => '更新内容',
-            "due_date" => "2023-11-05",
+            'due_date' => '2023-11-05',
             'category_id' => 1
         ]);
 

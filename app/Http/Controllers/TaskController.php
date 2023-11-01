@@ -10,12 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
+    protected $validator;
     protected $modifiableColumns;
     protected $listPageColumns = ['id', 'title', 'category_id', 'description', 'due_date', 'completed_at'];
     protected $otherPageColumns = ['id', 'title', 'category_id', 'description'];
 
     public function __construct() {
         $this->modifiableColumns = (new Task)->getFillable();
+
+        $this->validator = [
+            'category_id' => 'required',
+            'title' => 'required',
+        ];
     }
 
     public function index(Request $request)
@@ -54,8 +60,11 @@ class TaskController extends Controller
             'category_id' => 1
         ]);
 
+        $request->validate($this->validator);
+
         $data = $request->only($this->modifiableColumns);
         $task = Task::create($data);
+
         return compact('task');
     }
 
@@ -69,17 +78,21 @@ class TaskController extends Controller
             'category_id' => 1
         ]);
 
+        $request->validate($this->validator);
+
         $task = Task::findOrFail($id);
         DB::transaction(function () use ($request, $task) {
             $data = $request->only($this->modifiableColumns);
             $task = $task->update($data);
         });
+
         return compact('task');
     }
 
     public function destroy(Task $task)
     {
         $task->delete();
+
         return compact('task');
     }
 }

@@ -4,84 +4,72 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Task;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    protected $validator;
+    protected $modifiableColumns;
+    protected $listPageColumns = ['id', 'name'];
+    protected $otherPageColumns = ['id', 'name', 'deleted_at'];
+
+    public function __construct() {
+        $this->modifiableColumns = (new Category)->getFillable();
+
+        $this->validator = [
+            'name' => 'required',
+        ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $categories = Category::select($this->listPageColumns)->get();
+
+        return compact('categories');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCategoryRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreCategoryRequest $request)
+    public function show($id)
     {
-        //
+        $category = Category::select($this->otherPageColumns)->findOrFail($id);
+
+        return compact('category');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
+    public function store(Request $request)
     {
-        //
+        // 動作検証用
+        $request->merge([
+            'name' => 'カテゴリ名',
+        ]);
+
+        $data = $request->only($this->modifiableColumns);
+        $category = Category::create($data);
+
+        return compact('category');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
+    public function update(Request $request, $id)
     {
-        //
+        // 動作検証用
+        $request->merge([
+            'name' => '更新カテゴリ名',
+        ]);
+
+        $category = Category::findOrFail($id);
+        DB::transaction(function () use ($request, $category) {
+            $data = $request->only($this->modifiableColumns);
+            $category = $category->update($data);
+        });
+
+        return compact('category');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCategoryRequest  $request
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateCategoryRequest $request, Category $category)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return compact('category');
     }
 }

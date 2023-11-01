@@ -13,9 +13,6 @@ class Task extends Model
 
     protected $fillable = ['title', 'category_id', 'description', 'due_date', 'completed_at', 'deleted_at'];
     protected $casts=['completed_at' => 'date'];
-    protected $dates = ['deleted_at'];
-
-
     /*
     リレーション
     */

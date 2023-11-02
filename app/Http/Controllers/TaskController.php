@@ -68,7 +68,7 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         DB::transaction(function () use ($request, $task) {
             $data = $request->only($this->modifiableColumns);
-            $task = $task->update($data);
+            $task->update($data);
         });
 
         return compact('task');

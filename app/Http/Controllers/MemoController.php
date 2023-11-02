@@ -26,10 +26,12 @@ class MemoController extends Controller
     /*
     show,update,delete処理を共通化
     */
-    private function findMemoByTask($task_id, $memo_id) {
-        $task = Task::findOrFail($task_id);
+    private function findMemoByTask($memo_id) {
+        $memo = Memo::with('task')
+                 ->select($this->modifiableColumns)
+                 ->findOrFail($memo_id);
 
-        return $task->memos()->findOrFail($memo_id);
+        return !empty($memo->task) ? $memo : abort(404);
     }
 
     public function index($task_id)
@@ -41,11 +43,6 @@ class MemoController extends Controller
 
     public function store($task_id, Request $request)
     {
-        // 動作検証用
-        $request->merge([
-            'content' => 'コンテンツ',
-        ]);
-
         $request->validate($this->validator);
 
         $task = Task::findOrFail($task_id);
@@ -56,21 +53,16 @@ class MemoController extends Controller
 
     public function show($task_id, $memo_id)
     {
-        $memo = $this->findMemoByTask($task_id, $memo_id);
+        $memo = $this->findMemoByTask($memo_id);
 
         return compact('memo');
     }
 
     public function update($task_id, $memo_id, Request $request)
     {
-        // 動作検証用
-        $request->merge([
-            'content' => '更新コンテンツ',
-        ]);
-
         $request->validate($this->validator);
 
-        $memo = $this->findMemoByTask($task_id, $memo_id);
+        $memo = $this->findMemoByTask($memo_id);
 
         DB::transaction(function () use ($request, $memo) {
             $data = $request->only($this->modifiableColumns);
@@ -80,9 +72,8 @@ class MemoController extends Controller
         return compact('memo');
     }
 
-    public function destroy($task_id, $memo_id)
+    public function destroy($task_id, Memo $memo)
     {
-        $memo = $this->findMemoByTask($task_id, $memo_id);
         $memo->delete();
 
         return compact('memo');

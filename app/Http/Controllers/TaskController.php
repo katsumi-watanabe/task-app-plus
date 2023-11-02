@@ -44,14 +44,6 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        // 動作検証用
-        $request->merge([
-            'title' => '手動タイトル',
-            'description' => '手動内容',
-            'due_date' => '2023-11-05',
-            'category_id' => 1
-        ]);
-
         $request->validate($this->validator);
 
         $data = $request->only($this->modifiableColumns);
@@ -70,13 +62,6 @@ class TaskController extends Controller
 
     public function update(Request $request, $id)
     {
-        // 動作検証用
-        $request->merge([
-            'title' => '更新タイトル',
-            'description' => '更新内容',
-            'due_date' => '2023-11-05',
-            'category_id' => 1
-        ]);
 
         $request->validate($this->validator);
 

@@ -31,11 +31,6 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        // 動作検証用
-        $request->merge([
-            'name' => 'カテゴリ名',
-        ]);
-
         $request->validate($this->validator);
 
         $data = $request->only($this->modifiableColumns);
@@ -53,11 +48,6 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        // 動作検証用
-        $request->merge([
-            'name' => '更新カテゴリ名',
-        ]);
-
         $request->validate($this->validator);
 
         $category = Category::findOrFail($id);

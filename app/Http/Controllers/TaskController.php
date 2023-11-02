@@ -17,7 +17,7 @@ class TaskController extends Controller
 
     public function __construct() {
         $this->validator = [
-            'category_id' => 'required',
+            'category_id' => 'required|exists:categories,id',
             'title' => 'required',
         ];
 
@@ -32,8 +32,8 @@ class TaskController extends Controller
         // $request->input('search') ? $q->whereNotNull('completed_at') : $q;
 
         $tasks = $q->with(['category:id,name'])
-                ->withCount('memos')
                 ->select($this->listPageColumns)
+                ->withCount('memos')
                 ->orderByDefault()
                 ->get();
 

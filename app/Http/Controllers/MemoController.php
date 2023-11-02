@@ -13,7 +13,7 @@ class MemoController extends Controller
 
     protected $validator;
     protected $modifiableColumns;
-    protected $MemoColumns = ['id', 'content'];
+    protected $MemoColumns = ['id', 'task_id','content'];
 
     public function __construct() {
         $this->validator = [
@@ -28,7 +28,7 @@ class MemoController extends Controller
     */
     private function findMemoByTask($memo_id) {
         $memo = Memo::with('task')
-                 ->select($this->modifiableColumns)
+                 ->select($this->MemoColumns)
                  ->findOrFail($memo_id);
 
         return !empty($memo->task) ? $memo : abort(404);
@@ -63,10 +63,9 @@ class MemoController extends Controller
         $request->validate($this->validator);
 
         $memo = $this->findMemoByTask($memo_id);
-
         DB::transaction(function () use ($request, $memo) {
             $data = $request->only($this->modifiableColumns);
-            $memo = $memo->update($data);
+            $memo->update($data);
         });
 
         return compact('memo');

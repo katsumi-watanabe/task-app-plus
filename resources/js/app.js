@@ -1,6 +1,8 @@
 import './bootstrap';
 import { createApp } from 'vue';
 
+import Task from './tasks.vue';
+
 // Vuetify 使用時に必要なライブラリのインポート
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
@@ -25,4 +27,4 @@ const vuetify = createVuetify({
 });
 
 // use(vuetify)の追加
-createApp().use(vuetify).mount('#app');
+createApp(Task).use(vuetify).mount('#app');

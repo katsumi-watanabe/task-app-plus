@@ -12,7 +12,7 @@ class Task extends Model
     use SoftDeletes;
 
     protected $fillable = ['title', 'category_id', 'description', 'due_date', 'completed_at', 'deleted_at'];
-    protected $casts=['completed_at' => 'date'];
+    protected $casts = ['completed_at' => 'date:Y/m/d', 'due_date' => 'date:Y/m/d'];
     /*
     リレーション
     */

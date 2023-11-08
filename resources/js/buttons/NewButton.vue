@@ -1,22 +1,26 @@
 <template>
     <v-row justify="center">
       <v-dialog
-        v-model="edit_dialog"
+        v-model="new_dialog"
         persistent
         width="1024"
       >
         <template v-slot:activator="{ props }">
-          <v-btn
-            color="success"
-            v-bind="props"
-          >
-          <v-icon>mdi-table-edit</v-icon>
-          </v-btn>
-        </template>
+            <v-btn
+                class="bg-success white ml-3"
+                color="white"
+                v-bind="props"
+            >
+            <v-icon>
+                mdi-plus-circle-outline
+            </v-icon>
+                新規登録
+            </v-btn>
 
+        </template>
         <v-card>
           <v-card-title>
-            <span class="text-h5">編集</span>
+            <span class="text-h5">新規登録</span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -30,7 +34,7 @@
                     label="タイトル"
                     persistent-hint
                     required
-                    v-model="task.title"
+                    v-model="title"
                 ></v-text-field>
                 </v-col>
                 <v-col
@@ -44,7 +48,7 @@
                     item-title="name"
                     item-value="id"
                     required
-                    v-model="task.category_id"
+                    v-model="category_id"
                 >
                 </v-select>
 
@@ -54,14 +58,14 @@
                   <v-text-field
                     label="期日"
                     type="date"
-                    v-model="task.due_date"
+                    v-model="due_date"
                   >
                 </v-text-field>
                 </v-col>
                 <v-col cols="12">
                     <v-textarea
                     label="内容"
-                    v-model="task.description"
+                    v-model="description"
                     ></v-textarea>
                 </v-col>
                 <v-col
@@ -77,13 +81,13 @@
             <v-spacer></v-spacer>
             <v-btn
               variant="text"
-              @click="cancelEdit()"
+              @click="new_dialog = false"
             >
               Close
             </v-btn>
             <v-btn
               variant="text"
-              @click="confirmEdit()"
+              @click="confirmNew()"
             >
               Save
             </v-btn>
@@ -96,20 +100,19 @@
 export default {
     data() {
         return {
-            edit_dialog: false,
+            new_dialog: false,
             categories: [],
+            title: '',
+            due_date: '',
+            category_id: '',
+            description: '',
         };
     },
     mounted() {
         this.getCategories();
     },
-    emits: ['editOnClick'],
-    props: {
-        task: {
-            type: Object,
-            required: true
-        }
-    },
+    emits: ['newOnClick'],
+
     methods: {
         getCategories() {
             axios.get('/api/v1/categories').then(res => {
@@ -118,23 +121,19 @@ export default {
                 console.error('Error fetching categories:', error);
             });
         },
-        confirmEdit() {
-            const updatedTask = {
-                title: this.task.title,
-                description: this.task.description,
-                due_date: this.task.due_date,
-                category_id: this.task.category_id,
+        confirmNew() {
+            const newTask = {
+                title: this.title,
+                description: this.description,
+                due_date: this.due_date,
+                category_id: this.category_id,
             };
-            axios.put(`/api/v1/tasks/${this.task.id}`, updatedTask).then(res => {
-                this.$emit('editOnClick', this.task.id);
-                this.edit_dialog = false;
+            console.log(newTask);
+            axios.post(`/api/v1/tasks/`, newTask).then(res => {
+                this.$emit('newOnClick', res.data.tasks);
+                this.new_dialog = false;
             })
         },
-        // リアクティブのためキャンセル時に再度データを取得
-        cancelEdit() {
-            this.$emit('editOnClick', this.task.id);
-            this.edit_dialog = false;
-        }
     },
 };
 </script>

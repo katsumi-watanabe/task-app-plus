@@ -47,7 +47,7 @@ export default {
             delete_dialog: false,
         };
     },
-    emits: ['cancel', 'ok'],
+    emits: ['deleteOnClick'],
     props: {
         id: {
             type: Number,

@@ -10,6 +10,7 @@
                 class="bg-success white ml-3"
                 color="white"
                 v-bind="props"
+                @click="getCategories"
             >
             <v-icon>
                 mdi-plus-circle-outline

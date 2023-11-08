@@ -9,11 +9,12 @@
           <v-btn
             color="success"
             v-bind="props"
+            @click="getCategories"
           >
           <v-icon>mdi-table-edit</v-icon>
           </v-btn>
-        </template>
 
+        </template>
         <v-card>
           <v-card-title>
             <span class="text-h5">編集</span>

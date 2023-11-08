@@ -28,8 +28,10 @@ class TaskController extends Controller
     {
         $q = Task::query();
 
-        // ここに絞り込みの処理を追加します。
-        // $request->input('search') ? $q->whereNotNull('completed_at') : $q;
+        $request->input('keyword') ? $q->word($request->input('keyword')) : $q;
+        $request->input('category') ? $q->whereIn('category_id', $request->input('category')) : $q;
+        $request->input('status') == '未完了' ? $q->whereNull('completed_at') : $q;
+        $request->input('status') == '完了' ? $q->whereNotNull('completed_at') : $q;
 
         $tasks = $q->with(['category:id,name'])
                 ->select($this->listPageColumns)

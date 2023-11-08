@@ -3,7 +3,7 @@
 
         <v-app-bar color="primary">
             <template v-slot:prepend>
-                <v-btn class="bg-info">
+                <v-btn class="bg-info" @click="changeDisplay">
                     <v-icon>mdi-filter</v-icon>
                     フィルター
                 </v-btn>
@@ -22,61 +22,67 @@
             </template>
         </v-app-bar>
 
-
         <v-main>
             <v-container>
+                <div v-if="displaySearchBox == true">
+                    <v-row>
+                        <v-col cols="6">
+                        <v-select
+                            label="完了ステータス"
+                            :items="statusItems"
+                            v-model="selectedStatus"
+                        >
+                        </v-select>
+                        </v-col>
 
-            <v-container fluid>
-                <p>{{ selected }}</p>
-                <v-row>
-                    <v-col cols="3">
-                        <v-checkbox
-                        v-model="selected"
-                        label="未了"
-                        value="unfinished"
-                        ></v-checkbox>
+                        <v-col cols="6">
+                            <v-select
+                                label="カテゴリ"
+                                :items="categories"
+                                item-title="name"
+                                item-value="id"
+                                name="category"
+                                chips
+                                multiple
+                                v-model="selectedCategory"
+                            >
+                            </v-select>
+                        </v-col>
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="12">
+                            <v-text-field
+                                label="フリーワード検索"
+                                name="keyword_search"
+                                v-model="keyword_search"
+                            ></v-text-field>
                     </v-col>
-                    <v-col cols="3">
-                        <v-checkbox
-                        v-model="selected"
-                        label="完了"
-                        value="completed"
-                        ></v-checkbox>
-                    </v-col>
-                </v-row>
-            </v-container>
-            <v-select
-                label="カテゴリ"
-                :items="categories"
-                item-title="name"
-                item-value="id"
-            >
-            </v-select>
-            <v-card
-                class="mx-auto"
-                color="grey-lighten-3"
-            >
-            <v-text-field
-                density="compact"
-                variant="solo"
-                label="フリーワード検索"
-                name="keyword_search"
-                single-line
-                hide-details
-            ></v-text-field>
-            </v-card>
+                    </v-row>
 
-            <v-btn type="submit" prepend-icon="$vuetify">
-                検索
-            </v-btn>
-            <v-btn prepend-icon="$vuetify">
-                リセット
-            </v-btn>
-
-                <v-table fixed-header height="1000px">
+                    <v-row>
+                        <v-col cols="12">
+                            <v-btn
+                                prepend-icon="mdi-magnify"
+                                @click="search"
+                                class="mr-5"
+                                color="info"
+                            >
+                                検索
+                            </v-btn>
+                            <v-btn
+                                prepend-icon="mdi-refresh"
+                                @click="reset"
+                            >
+                                リセット
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </div>
+                <v-table fixed-header height="1000px" class="mt-5">
                     <thead>
                         <tr>
-                            <th class="text-left">ID</th>
+                            <th class="text-left">ステータス</th>
                             <th class="text-left">タイトル</th>
                             <th class="text-left">カテゴリ</th>
                             <th class="text-left">内容</th>
@@ -89,7 +95,13 @@
                     </thead>
                     <tbody>
                         <tr v-for="task in tasks" :key="task.id">
-                            <td>{{ task.id }}</td>
+                            <td>
+                                <v-checkbox
+                                    color="success"
+                                    hide-details
+                                    @click="complete(task.id)"
+                                ></v-checkbox>
+                            </td>
                             <td>{{ task.title }}</td>
                             <td>{{ task.category.name }}</td>
                             <td>{{ task.description }}</td>
@@ -130,20 +142,25 @@ export default {
     data() {
         return {
             tasks: [],
-            selected: [],
             categories: [],
-            keyword_search: [],
+
+            // 検索関連
+            selectedStatus: [],
+            keyword_search: '',
+            selectedCategory: [],
+            statusItems: ['完了', '未完了'],
+            displaySearchBox: false,
         };
     },
     mounted() {
-        this.fetchTasks();
-
         axios.get('/api/v1/categories').then(res => {
             this.categories = res.data.categories;
         })
         .catch(error => {
             console.error('Error fetching categories:', error);
         });
+        this.fetchTasks();
+
     },
     methods: {
         dateFormat(date) {
@@ -153,6 +170,7 @@ export default {
             const d = dt.getDate().toString().padStart(2, '0');
             return `${y}/${m}/${d}`;
         },
+        // タスク一覧取得
         fetchTasks() {
             axios.get('/api/v1/tasks').then(res => {
                 this.tasks = res.data.tasks;
@@ -170,6 +188,45 @@ export default {
         handleEdit() {
             this.fetchTasks();
         },
+        changeDisplay() {
+            this.displaySearchBox == true ? this.displaySearchBox = false : this.displaySearchBox = true;
+        },
+
+        // 検索関連
+        search() {
+            const selectedStatus = this.selectedStatus;
+            const keyword = this.keyword_search;
+            const category = this.selectedCategory;
+            // 検索リクエストを送信
+            axios.get('/api/v1/tasks', {
+                params: {
+                status: selectedStatus,
+                keyword: keyword,
+                category: category,
+                }
+            })
+            .then(res => {
+                this.tasks = res.data.tasks;
+                // return response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
+        reset() {
+            this.selectedStatus = [];
+            this.keyword_search = "";
+            this.selectedCategory = [];
+            this.search();
+        },
+
+        // タスク完了ステータス
+        complete(id) {
+            axios.put(`/api/v1/tasks/${id}`).then(res => {
+                this.tasks = res.data.tasks;
+            })
+      },
+
     },
 };
 </script>

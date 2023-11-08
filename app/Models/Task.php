@@ -12,7 +12,7 @@ class Task extends Model
     use SoftDeletes;
 
     protected $fillable = ['title', 'category_id', 'description', 'due_date', 'completed_at', 'deleted_at'];
-    protected $casts = ['completed_at' => 'date:Y/m/d', 'due_date' => 'date:Y/m/d'];
+    protected $casts = ['completed_at' => 'date:Y/m/d', 'due_date' => 'date:Y-m-d'];
     /*
     リレーション
     */
@@ -29,6 +29,18 @@ class Task extends Model
     public function scopeOrderByDefault($query)
     {
         return $query->orderBy('completed_at', 'DESC')->orderBy('id', 'DESC');
+    }
+
+    public function scopeWord($query, $text)
+    {
+        if (!empty($text)) {
+            $text = '%'.addcslashes($text, '%_\\').'%';
+            $query->where(function ($query) use ($text) {
+                $query->orWhere('title', 'like', $text);
+                $query->orWhere('description', 'like', $text);
+            });
+        }
+        return $query;
     }
 
 }

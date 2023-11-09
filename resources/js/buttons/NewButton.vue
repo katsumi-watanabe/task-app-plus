@@ -10,7 +10,6 @@
                 class="bg-success white ml-3"
                 color="white"
                 v-bind="props"
-                @click="getCategories"
             >
             <v-icon>
                 mdi-plus-circle-outline
@@ -102,26 +101,20 @@ export default {
     data() {
         return {
             new_dialog: false,
-            categories: [],
             title: '',
             due_date: '',
             category_id: '',
             description: '',
         };
     },
-    mounted() {
-        this.getCategories();
-    },
     emits: ['newOnClick'],
+    props: {
+        categories: {
+            type: Array,
+        },
+    },
 
     methods: {
-        getCategories() {
-            axios.get('/api/v1/categories').then(res => {
-                this.categories = res.data.categories;
-            }).catch(error => {
-                console.error('Error fetching categories:', error);
-            });
-        },
         confirmNew() {
             const newTask = {
                 title: this.title,
@@ -129,7 +122,6 @@ export default {
                 due_date: this.due_date,
                 category_id: this.category_id,
             };
-            console.log(newTask);
             axios.post(`/api/v1/tasks/`, newTask).then(res => {
                 this.$emit('newOnClick', res.data.tasks);
                 this.new_dialog = false;

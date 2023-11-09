@@ -9,7 +9,6 @@
           <v-btn
             color="success"
             v-bind="props"
-            @click="getCategories"
           >
           <v-icon>mdi-table-edit</v-icon>
           </v-btn>
@@ -98,27 +97,19 @@ export default {
     data() {
         return {
             edit_dialog: false,
-            categories: [],
         };
-    },
-    mounted() {
-        this.getCategories();
     },
     emits: ['updateOnClick'],
     props: {
+        categories: {
+            type: Array,
+        },
         task: {
             type: Object,
             required: true
-        }
+        },
     },
     methods: {
-        getCategories() {
-            axios.get('/api/v1/categories').then(res => {
-                this.categories = res.data.categories;
-            }).catch(error => {
-                console.error('Error fetching categories:', error);
-            });
-        },
         confirmUpdate() {
             const updatedTask = {
                 title: this.task.title,

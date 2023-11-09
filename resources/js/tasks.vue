@@ -18,7 +18,7 @@
                     カテゴリ一覧
                 </v-btn>
 
-                <NewButton @newOnClick="handleNew" class="mx-3"></NewButton>
+                <NewButton :categories="categories" @newOnClick="handleNew" class="mx-3"></NewButton>
             </template>
         </v-app-bar>
 
@@ -79,7 +79,7 @@
                         </v-col>
                     </v-row>
                 </div>
-                <v-table fixed-header height="1000px" class="mt-5">
+                <v-table height="500px" class="mt-5">
                     <thead>
                         <tr>
                             <th class="text-left">ステータス</th>
@@ -94,16 +94,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="task in tasks" :key="task.id">
+                        <tr v-for="task in displayTasks" :key="task.id">
                             <td>
                                 <v-checkbox
                                     v-if="!task.completed_at"
                                     @click="complete(task.id)"
+                                    hide-details
                                 ></v-checkbox>
                                 <v-checkbox
                                     v-else
                                     :model-value="true"
                                     @click="cancel(task.id)"
+                                    hide-details
                                 ></v-checkbox>
                             </td>
                             <td>{{ task.title }}</td>
@@ -114,11 +116,21 @@
                             <td v-if="!!task.completed_at">{{ dateFormat(task.completed_at) }}</td>
                             <td v-else>-</td>
                             <td>{{ task.memos_count }}</td>
-                            <td><UpdateButton :task="task" @updateOnClick="handleUpdate"></UpdateButton></td>
+                            <td><UpdateButton :task="task" :categories="categories" @updateOnClick="handleUpdate"></UpdateButton></td>
                             <td><DeleteButton :id="task.id" @deleteOnClick="handleDelete"></DeleteButton></td>
                         </tr>
                     </tbody>
                 </v-table>
+                <v-content>
+                    <div class="text-center">
+                        <v-pagination
+                            v-model="page"
+                            :length="length"
+                            @click ="pageChange(page)"
+                        >
+                        </v-pagination>
+                    </div>
+                </v-content>
             </v-container>
         </v-main>
 
@@ -147,6 +159,12 @@ export default {
         return {
             tasks: [],
             categories: [],
+
+            // ページネーション
+            page: 1,
+            pageSize: 10,
+            length:0,
+            displayTasks: [],
 
             // 検索関連
             selectedStatus: [],
@@ -178,6 +196,7 @@ export default {
         fetchTasks() {
             axios.get('/api/v1/tasks').then(res => {
                 this.tasks = res.data.tasks;
+                this.pageCalculation(this.tasks);
             })
             .catch(error => {
                 console.error('Error fetching tasks:', error);
@@ -210,7 +229,8 @@ export default {
                 }
             })
             .then(res => {
-                this.tasks = res.data.tasks;
+                this.displayTasks = res.data.tasks;
+                this.pageCalculation(this.displayTasks);
             })
             .catch(error => {
                 console.error(error);
@@ -234,6 +254,17 @@ export default {
                 this.fetchTasks();
             })
         },
+
+        // ページネーション
+        pageCalculation(tasks) {
+            (Math.ceil(tasks.length/this.pageSize));
+            this.length = Math.ceil(tasks.length/this.pageSize);
+            this.displayTasks = tasks.slice(this.pageSize*(this.page -1), this.pageSize*(this.page));
+        },
+        pageChange(pageNumber) {
+            this.page = pageNumber;
+            this.search();
+        }
 
     },
 };

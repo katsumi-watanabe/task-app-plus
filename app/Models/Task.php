@@ -26,6 +26,18 @@ class Task extends Model
         return $this->hasMany(Memo::class);
     }
 
+    public function complete()
+    {
+        $this->completed_at = now();
+        $this->save();
+    }
+
+    public function cancel()
+    {
+        $this->completed_at = null;
+        $this->save();
+    }
+
     public function scopeOrderByDefault($query)
     {
         return $query->orderBy('completed_at', 'DESC')->orderBy('id', 'DESC');

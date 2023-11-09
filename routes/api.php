@@ -27,4 +27,6 @@ Route::prefix('v1')->group(function (){
     ->except(['create', 'edit']);
     Route::resource('categories', CategoryController::class)
     ->except(['create', 'edit']);
+    Route::put('tasks/{task}/complete', [TaskController::class, 'completeTask']);
+    Route::put('tasks/{task}/cancel', [TaskController::class, 'cancelTask']);
 });

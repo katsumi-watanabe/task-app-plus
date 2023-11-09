@@ -62,6 +62,25 @@ class TaskController extends Controller
         return compact('task', 'categories');
     }
 
+    /*
+    update処理
+    */
+    public function completeTask($id)
+    {
+        DB::transaction(function () use ($id) {
+            $task = Task::findOrFail($id);
+            $task->complete();
+        });
+    }
+
+    public function cancelTask($id)
+    {
+        DB::transaction(function () use ($id) {
+            $task = Task::findOrFail($id);
+            $task->cancel();
+        });
+    }
+
     public function update(Request $request, $id)
     {
 

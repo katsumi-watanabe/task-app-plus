@@ -97,9 +97,13 @@
                         <tr v-for="task in tasks" :key="task.id">
                             <td>
                                 <v-checkbox
-                                    color="success"
-                                    hide-details
+                                    v-if="!task.completed_at"
                                     @click="complete(task.id)"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-else
+                                    :model-value="true"
+                                    @click="cancel(task.id)"
                                 ></v-checkbox>
                             </td>
                             <td>{{ task.title }}</td>
@@ -110,7 +114,7 @@
                             <td v-if="!!task.completed_at">{{ dateFormat(task.completed_at) }}</td>
                             <td v-else>-</td>
                             <td>{{ task.memos_count }}</td>
-                            <td><UpdateButton :task="task" @editOnClick="handleEdit"></UpdateButton></td>
+                            <td><UpdateButton :task="task" @updateOnClick="handleUpdate"></UpdateButton></td>
                             <td><DeleteButton :id="task.id" @deleteOnClick="handleDelete"></DeleteButton></td>
                         </tr>
                     </tbody>
@@ -185,7 +189,7 @@ export default {
         handleDelete() {
             this.fetchTasks();
         },
-        handleEdit() {
+        handleUpdate() {
             this.fetchTasks();
         },
         changeDisplay() {
@@ -197,7 +201,6 @@ export default {
             const selectedStatus = this.selectedStatus;
             const keyword = this.keyword_search;
             const category = this.selectedCategory;
-            // 検索リクエストを送信
             axios.get('/api/v1/tasks', {
                 params: {
                 status: selectedStatus,
@@ -207,7 +210,6 @@ export default {
             })
             .then(res => {
                 this.tasks = res.data.tasks;
-                // return response.data;
             })
             .catch(error => {
                 console.error(error);
@@ -222,10 +224,15 @@ export default {
 
         // タスク完了ステータス
         complete(id) {
-            axios.put(`/api/v1/tasks/${id}`).then(res => {
-                this.tasks = res.data.tasks;
+            axios.put(`/api/v1/tasks/${id}/complete`).then(res => {
+                this.fetchTasks();
             })
-      },
+        },
+        cancel(id) {
+            axios.put(`/api/v1/tasks/${id}/cancel`).then(res => {
+                this.fetchTasks();
+            })
+        },
 
     },
 };

@@ -78,13 +78,13 @@
             <v-spacer></v-spacer>
             <v-btn
               variant="text"
-              @click="cancelEdit()"
+              @click="cancelUpdate()"
             >
               Close
             </v-btn>
             <v-btn
               variant="text"
-              @click="confirmEdit()"
+              @click="confirmUpdate()"
             >
               Save
             </v-btn>
@@ -104,7 +104,7 @@ export default {
     mounted() {
         this.getCategories();
     },
-    emits: ['editOnClick'],
+    emits: ['updateOnClick'],
     props: {
         task: {
             type: Object,
@@ -119,7 +119,7 @@ export default {
                 console.error('Error fetching categories:', error);
             });
         },
-        confirmEdit() {
+        confirmUpdate() {
             const updatedTask = {
                 title: this.task.title,
                 description: this.task.description,
@@ -127,13 +127,13 @@ export default {
                 category_id: this.task.category_id,
             };
             axios.put(`/api/v1/tasks/${this.task.id}`, updatedTask).then(res => {
-                this.$emit('editOnClick', this.task.id);
+                this.$emit('updateOnClick', this.task.id);
                 this.edit_dialog = false;
             })
         },
         // リアクティブのためキャンセル時に再度データを取得
-        cancelEdit() {
-            this.$emit('editOnClick', this.task.id);
+        cancelUpdate() {
+            this.$emit('updateOnClick', this.task.id);
             this.edit_dialog = false;
         }
     },

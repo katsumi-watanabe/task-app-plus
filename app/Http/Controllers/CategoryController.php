@@ -24,7 +24,7 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $categories = Category::select($this->CategoryColumns)->get();
+        $categories = Category::select($this->CategoryColumns)->orderByDefault()->get();
 
         return compact('categories');
     }
@@ -35,8 +35,9 @@ class CategoryController extends Controller
 
         $data = $request->only($this->modifiableColumns);
         $category = Category::create($data);
+        $categories = Category::select($this->CategoryColumns)->orderByDefault()->get();
 
-        return compact('category');
+        return compact('categories');
     }
 
     public function show($id)
@@ -56,7 +57,7 @@ class CategoryController extends Controller
             $category = $category->update($data);
         });
 
-        return compact('category');
+        return compact('categories');
     }
 
     public function destroy(Category $category)

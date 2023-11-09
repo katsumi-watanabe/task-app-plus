@@ -29,7 +29,7 @@
                 <v-text-field
                     label="タイトル"
                     persistent-hint
-                    required
+                    :rules="[rules.required]"
                     v-model="task.title"
                 ></v-text-field>
                 </v-col>
@@ -43,7 +43,7 @@
                     :items="categories"
                     item-title="name"
                     item-value="id"
-                    required
+                    :rules="[rules.required]"
                     v-model="task.category_id"
                 >
                 </v-select>
@@ -79,13 +79,13 @@
               variant="text"
               @click="cancelUpdate()"
             >
-              Close
+              CANCEL
             </v-btn>
             <v-btn
               variant="text"
               @click="confirmUpdate()"
             >
-              Save
+              OK
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -97,6 +97,9 @@ export default {
     data() {
         return {
             edit_dialog: false,
+            rules: {
+                required: value => !!value || 'Field is required',
+            },
         };
     },
     emits: ['updateOnClick'],

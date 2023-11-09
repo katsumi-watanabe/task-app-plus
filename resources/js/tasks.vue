@@ -14,9 +14,7 @@
             </v-app-bar-title>
 
             <template v-slot:append>
-                <v-btn class="bg-grey white">
-                    カテゴリ一覧
-                </v-btn>
+                <CategoryList></CategoryList>
 
                 <NewButton :categories="categories" @newOnClick="handleNew" class="mx-3"></NewButton>
             </template>
@@ -79,7 +77,7 @@
                         </v-col>
                     </v-row>
                 </div>
-                <v-table height="500px" class="mt-5">
+                <v-table height="450px">
                     <thead>
                         <tr>
                             <th class="text-left">ステータス</th>
@@ -94,7 +92,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="task in displayTasks" :key="task.id">
+                        <tr v-for="task in displayTasks" :key="task.id" :class="{'bg-lightgray': task.completed_at}">
                             <td>
                                 <v-checkbox
                                     v-if="!task.completed_at"
@@ -104,6 +102,7 @@
                                 <v-checkbox
                                     v-else
                                     :model-value="true"
+                                    class="success"
                                     @click="cancel(task.id)"
                                     hide-details
                                 ></v-checkbox>
@@ -122,7 +121,7 @@
                     </tbody>
                 </v-table>
                 <v-content>
-                    <div class="text-center">
+                    <div class="d-flex justify-end mt-2 mb-6">
                         <v-pagination
                             v-model="page"
                             :length="length"
@@ -144,16 +143,25 @@
 
     </v-app>
 </template>
+
+<style>
+.bg-lightgray {
+    background-color: #F5F5F5;
+}
+</style>
+
 <script>
 import DeleteButton from './buttons/DeleteButton.vue';
 import UpdateButton from './buttons/UpdateButton.vue';
 import NewButton from './buttons/NewButton.vue';
+import CategoryList from './lists/CategoryList.vue';
 
 export default {
     components: {
         DeleteButton,
         UpdateButton,
         NewButton,
+        CategoryList,
     },
     data() {
         return {

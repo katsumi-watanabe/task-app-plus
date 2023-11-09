@@ -40,7 +40,7 @@ class Task extends Model
 
     public function scopeOrderByDefault($query)
     {
-        return $query->orderBy('completed_at', 'DESC')->orderBy('id', 'DESC');
+        return $query->orderBy('completed_at', 'ASC')->orderBy('due_date', 'DESC')->orderBy('id', 'DESC');
     }
 
     public function scopeWord($query, $text)

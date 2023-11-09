@@ -121,7 +121,7 @@
             @cancel="CatListChildDlg = false"
             @ok="confirmNewCategory"
             :isNew="isNewCategory"
-            :category="selectedCategory"
+            :category="currentCategory"
         >
         </CategoryForm>
         </v-dialog>
@@ -145,7 +145,7 @@ export default {
             required: value => !!value || 'Field is required',
         },
 
-        selectedCategory: null,
+        currentCategory: null,
         isNewCategory: true,
     }
     },
@@ -176,13 +176,13 @@ export default {
             })
         },
         createCategory() {
-            this.selectedCategory = '';
+            this.currentCategory = '';
             this.CatListChildDlg = true;
             this.isNewCategory = true;
         },
 
         updateCategory(category) {
-            this.selectedCategory = category;
+            this.currentCategory = category;
             this.CatListChildDlg = true;
             this.isNewCategory = false;
         }

@@ -21,7 +21,7 @@
                 label="カテゴリ名"
                 persistent-hint
                 :rules="[rules.required]"
-                v-model="selectedCategory.name"
+                v-model="currentCategory.name"
             ></v-text-field>
             </v-col>
         </v-row>
@@ -37,7 +37,7 @@
         </v-btn>
         <v-btn
             variant="text"
-            @click="ok()"
+            @click="confirmCategory"
         >
         OK
         </v-btn>
@@ -58,7 +58,7 @@ export default {
 
     data() {
         return {
-            selectedCategory: this.category,
+            currentCategory: this.category,
             name: '',
             rules: {
                 required: value => !!value || 'Field is required',
@@ -66,11 +66,12 @@ export default {
         }
     },
     methods: {
-        ok() {
-            const params = {
-                name: this.name,
+        confirmCategory() {
+            if (this.isNew) {
+                this.$emit('create', this.currentCategory);
+            } else {
+                this.$emit('update', this.currentCategory);
             }
-            this.$emit('ok', params)
         }
     }
 }

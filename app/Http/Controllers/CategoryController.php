@@ -57,7 +57,6 @@ class CategoryController extends Controller
             $category = $category->update($data);
         });
 
-        return compact('categories');
     }
 
     public function destroy(Category $category)

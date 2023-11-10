@@ -1,7 +1,7 @@
 <template>
     <v-row justify="center">
         <v-dialog
-        v-model="delete_dialog"
+        v-model="catDeleteDlg"
         persistent
         width="auto"
         >
@@ -23,13 +23,13 @@
             <v-spacer></v-spacer>
             <v-btn
                 variant="text"
-                @click="delete_dialog = false"
+                @click="catDeleteDlg = false"
             >
                 CANCEL
             </v-btn>
             <v-btn
                 variant="text"
-                @click="confirmDelete()"
+                @click="confirmDelete(category)"
             >
                 OK
             </v-btn>
@@ -40,26 +40,23 @@
 </template>
 <script>
 export default {
-    data() {
-        return {
-            delete_dialog: false,
-        };
-    },
-    emits: ['deleteOnClick'],
+    emits: ['delete'],
     props: {
-        id: {
-            type: Number,
+        category: {
+            type: Object,
             required: true
         }
+    },
+    data() {
+        return {
+            catDeleteDlg: false,
+        };
     },
 
     methods: {
         confirmDelete() {
-            axios.delete(`/api/v1/tasks/${this.id}`).then(res => {
-                this.$emit('deleteOnClick', this.id);
-                this.delete_dialog = false;
-            })
-        },
-  },
+            this.$emit('delete', this.category);
+      },
+    },
 };
 </script>

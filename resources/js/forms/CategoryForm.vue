@@ -46,7 +46,7 @@
 </template>
 <script>
 export default {
-    emits: ['cancel', 'ok'],
+    emits: ['cancel', 'create', 'update'],
     props: {
         category: {
             type: Object,

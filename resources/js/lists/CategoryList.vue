@@ -98,11 +98,11 @@
                                 </v-btn>
                             </td>
                             <td class="text-left">
-                                <v-btn
-                                color="red"
-                                >
-                                <v-icon>mdi-delete</v-icon>
-                                </v-btn>
+                                <CategoryDeleteButton
+                                    :category="category"
+                                    @cancel="CategoryDeleteButton = false"
+                                    @delete="confirmDeleteCategory"
+                                ></CategoryDeleteButton>
                             </td>
                         </tr>
                     </tbody>
@@ -118,10 +118,11 @@
         >
 
         <CategoryForm
-            @cancel="CatListChildDlg = false"
-            @ok="confirmNewCategory"
+            @cancel="confirmCancel"
             :isNew="isNewCategory"
-            :category="currentCategory"
+            :category="selectedCategory"
+            @create="confirmNewCategory"
+            @update="confirmUpdateCategory"
         >
         </CategoryForm>
         </v-dialog>
@@ -131,21 +132,28 @@
 </template>
 <script>
 import CategoryForm from '../forms/CategoryForm.vue';
+import CategoryDeleteButton from '../buttons/CategoryDeleteButton.vue'
+import axios from 'axios';
+
 export default {
     components: {
         CategoryForm,
+        CategoryDeleteButton,
     },
     data () {
     return {
+        categories: '',
         name: '',
         CatListDlg: false,
         CatListParDlg: false,
         CatListChildDlg: false,
+        catDeleteDlg: false,
+
         rules: {
             required: value => !!value || 'Field is required',
         },
 
-        currentCategory: null,
+        selectedCategory: '',
         isNewCategory: true,
     }
     },
@@ -175,17 +183,52 @@ export default {
                 this.CatListChildDlg = false;
             })
         },
+
+        // 子コンポーネントへのデータ引数
         createCategory() {
-            this.currentCategory = '';
+            this.selectedCategory = { name: '' };
             this.CatListChildDlg = true;
             this.isNewCategory = true;
         },
 
         updateCategory(category) {
-            this.currentCategory = category;
+            this.selectedCategory = category;
             this.CatListChildDlg = true;
             this.isNewCategory = false;
-        }
+        },
+
+        // 親コンポーネントで実行
+        confirmNewCategory(category) {
+            axios.post('/api/v1/categories', category).then(() => {
+                this.fetchCategories();
+                this.CatListChildDlg = false;
+            }).catch(error => {
+                console.error('Error creating new category:', error);
+            })
+        },
+
+        confirmUpdateCategory(category) {
+            axios.put(`/api/v1/categories/${category.id}`, category).then(() => {
+                this.fetchCategories();
+                this.CatListChildDlg = false;
+            }).catch(error => {
+                console.error('Error updating category:', error);
+            })
+        },
+
+        confirmDeleteCategory(category) {
+            axios.delete(`/api/v1/categories/${category.id}`, category).then(() => {
+                this.fetchCategories();
+                this.CatListChildDlg = false;
+            }).catch(error => {
+                console.error('Error updating category:', error);
+            })
+        },
+
+        confirmCancel() {
+            this.fetchCategories();
+            this.CatListChildDlg = false;
+        },
     }
 }
 </script>

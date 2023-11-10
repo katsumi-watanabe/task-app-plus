@@ -16,7 +16,16 @@
             <template v-slot:append>
                 <CategoryList></CategoryList>
 
-                <NewButton :categories="categories" @newOnClick="handleNew" class="mx-3"></NewButton>
+                <v-btn
+                    class="bg-success white ml-8"
+                    @click="createTask"
+                >
+                <v-icon>
+                    mdi-plus-circle-outline
+                </v-icon>
+                    新規登録
+                </v-btn>
+                <!-- <NewButton :categories="categories" @newOnClick="handleNew" class="mx-3"></NewButton> -->
             </template>
         </v-app-bar>
 
@@ -115,7 +124,15 @@
                             <td v-if="!!task.completed_at">{{ dateFormat(task.completed_at) }}</td>
                             <td v-else>-</td>
                             <td>{{ task.memos_count }}</td>
-                            <td><UpdateButton :task="task" :categories="categories" @updateOnClick="handleUpdate"></UpdateButton></td>
+                            <td>
+                                <v-btn
+                                    class="bg-success white ml-8"
+                                    @click="updateTask(task)"
+                                >
+                                    <v-icon>mdi-table-edit</v-icon>
+                                </v-btn>
+                                <!-- <UpdateButton :task="task" :categories="categories" @updateOnClick="handleUpdate"></UpdateButton> -->
+                            </td>
                             <td><DeleteButton :task="task" @cancel="deleteDialog = false" @delete="confirmDelete"></DeleteButton></td>
                         </tr>
                     </tbody>
@@ -130,6 +147,20 @@
                         </v-pagination>
                     </div>
                 </v-content>
+
+                <v-dialog
+                    v-model="taskFormDialog"
+                    width="1024"
+                >
+                    <TaskForm
+                        :isNew="isNewTask"
+                        :task="selectedTask"
+                        :categories="categories"
+                        @cancel="confirmCancel"
+                        @create="confirmNewTask"
+                        @update="confirmUpdateTask"
+                    ></TaskForm>
+                </v-dialog>
             </v-container>
         </v-main>
 
@@ -154,6 +185,7 @@
 import DeleteButton from './buttons/DeleteButton.vue';
 import UpdateButton from './buttons/UpdateButton.vue';
 import NewButton from './buttons/NewButton.vue';
+import TaskForm from './forms/TaskForm.vue';
 import CategoryList from './lists/CategoryList.vue';
 
 export default {
@@ -162,6 +194,7 @@ export default {
         UpdateButton,
         NewButton,
         CategoryList,
+        TaskForm,
     },
     data() {
         return {
@@ -175,6 +208,9 @@ export default {
             displayTasks: [],
 
             deleteDialog: false,
+            selectedTask: '',
+            isNewTask: true,
+            taskFormDialog: false,
 
             // 検索関連
             selectedStatus: [],
@@ -214,8 +250,50 @@ export default {
             });
         },
 
+        // 子コンポーネントへのデータ引数
+        createTask() {
+            this.selectedTask = { title: '', description: '', due_date: '', category_id: '' };
+            this.isNewTask = true;
+            this.taskFormDialog = true;
+        },
+
+        updateTask(task) {
+            console.log(task);
+            this.selectedTask = task;
+            this.isNewTask = false;
+            this.taskFormDialog = true;
+        },
+
+        confirmNewTask(task) {
+            axios.post('/api/v1/tasks', task).then(() => {
+                this.fetchTasks();
+                this.taskFormDialog = false;
+            }).catch(error => {
+                console.error('Error creating new task:', error);
+            })
+        },
+
+        confirmUpdateTask(task) {
+            axios.put(`/api/v1/tasks/${task.id}`, task).then(() => {
+                this.fetchTasks();
+                this.taskFormDialog = false;
+            }).catch(error => {
+                console.error('Error updating task:', error);
+            })
+        },
+        confirmCancel() {
+            this.fetchTasks();
+            this.taskFormDialog = false;
+        },
+
         confirmDelete(task) {
-            axios.delete(`/api/v1/tasks/${task.id}`, task).then(() => {
+            const params = {
+                title: this.title,
+                description: this.description,
+                due_date: this.due_date,
+                category_id: this.category_id,
+            }
+            axios.delete(`/api/v1/tasks/${task.id}`, params).then(() => {
                 this.fetchTasks();
                 this.deleteDialog = false;
             }).catch(error => {
@@ -223,12 +301,6 @@ export default {
             })
         },
 
-        handleNew() {
-            this.fetchTasks();
-        },
-        handleUpdate() {
-            this.fetchTasks();
-        },
         // 検索ボックス表示切替
         changeDisplay() {
             this.displaySearchBox == true ? this.displaySearchBox = false : this.displaySearchBox = true;

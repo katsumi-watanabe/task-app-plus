@@ -25,7 +25,6 @@
                 </v-icon>
                     新規登録
                 </v-btn>
-                <!-- <NewButton :categories="categories" @newOnClick="handleNew" class="mx-3"></NewButton> -->
             </template>
         </v-app-bar>
 
@@ -131,7 +130,6 @@
                                 >
                                     <v-icon>mdi-table-edit</v-icon>
                                 </v-btn>
-                                <!-- <UpdateButton :task="task" :categories="categories" @updateOnClick="handleUpdate"></UpdateButton> -->
                             </td>
                             <td><DeleteButton :task="task" @cancel="deleteDialog = false" @delete="confirmDelete"></DeleteButton></td>
                         </tr>
@@ -183,16 +181,12 @@
 
 <script>
 import DeleteButton from './buttons/DeleteButton.vue';
-import UpdateButton from './buttons/UpdateButton.vue';
-import NewButton from './buttons/NewButton.vue';
 import TaskForm from './forms/TaskForm.vue';
 import CategoryList from './lists/CategoryList.vue';
 
 export default {
     components: {
         DeleteButton,
-        UpdateButton,
-        NewButton,
         CategoryList,
         TaskForm,
     },

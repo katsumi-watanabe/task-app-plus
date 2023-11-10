@@ -201,10 +201,12 @@ export default {
             length:0,
             displayTasks: [],
 
+            // ダイアログ
             deleteDialog: false,
+            taskFormDialog: false,
+
             selectedTask: '',
             isNewTask: true,
-            taskFormDialog: false,
 
             // 検索関連
             selectedStatus: [],

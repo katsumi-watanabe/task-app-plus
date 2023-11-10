@@ -116,7 +116,7 @@
                             <td v-else>-</td>
                             <td>{{ task.memos_count }}</td>
                             <td><UpdateButton :task="task" :categories="categories" @updateOnClick="handleUpdate"></UpdateButton></td>
-                            <td><DeleteButton :id="task.id" @deleteOnClick="handleDelete"></DeleteButton></td>
+                            <td><DeleteButton :task="task" @cancel="deleteDialog = false" @delete="confirmDelete"></DeleteButton></td>
                         </tr>
                     </tbody>
                 </v-table>
@@ -174,6 +174,8 @@ export default {
             length:0,
             displayTasks: [],
 
+            deleteDialog: false,
+
             // 検索関連
             selectedStatus: [],
             keyword_search: '',
@@ -200,6 +202,7 @@ export default {
             const d = dt.getDate().toString().padStart(2, '0');
             return `${y}/${m}/${d}`;
         },
+
         // タスク一覧取得
         fetchTasks() {
             axios.get('/api/v1/tasks').then(res => {
@@ -210,10 +213,17 @@ export default {
                 console.error('Error fetching tasks:', error);
             });
         },
-        handleNew() {
-            this.fetchTasks();
+
+        confirmDelete(task) {
+            axios.delete(`/api/v1/tasks/${task.id}`, task).then(() => {
+                this.fetchTasks();
+                this.deleteDialog = false;
+            }).catch(error => {
+                console.error('Error updating task:', error);
+            })
         },
-        handleDelete() {
+
+        handleNew() {
             this.fetchTasks();
         },
         handleUpdate() {

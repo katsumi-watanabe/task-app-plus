@@ -22,14 +22,12 @@
             <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-                variant="text"
                 @click="catDeleteDlg = false"
             >
                 CANCEL
             </v-btn>
             <v-btn
-                variant="text"
-                @click="confirmDelete(category)"
+                @click="confirmDelete()"
             >
                 OK
             </v-btn>

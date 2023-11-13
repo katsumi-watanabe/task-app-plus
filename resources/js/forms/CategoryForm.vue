@@ -30,12 +30,14 @@
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
+            class="bg-grey-lighten-3"
             variant="text"
             @click="$emit('cancel')"
         >
         CANCEL
         </v-btn>
         <v-btn
+            class="bg-light-blue"
             variant="text"
             @click="confirmCategory"
         >

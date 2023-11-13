@@ -1,9 +1,9 @@
 <template>
     <v-row justify="center">
         <v-dialog
-        v-model="catDeleteDlg"
-        persistent
-        width="auto"
+            v-model="catDeleteDlg"
+            persistent
+            width="auto"
         >
         <template v-slot:activator="{ props }">
             <v-btn
@@ -22,11 +22,13 @@
             <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+                class="bg-grey-lighten-3"
                 @click="catDeleteDlg = false"
             >
                 CANCEL
             </v-btn>
             <v-btn
+                class="bg-light-blue"
                 @click="confirmDelete()"
             >
                 OK

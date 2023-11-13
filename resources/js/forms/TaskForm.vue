@@ -1,29 +1,20 @@
 <template>
     <v-row justify="center">
-        <v-card>
-          <v-card-title>
+        <v-card width="80vh" height="70vh" style="overflow: scroll;">
+          <v-card-title class="mt-5">
             <span class="text-h5">新規登録</span>
           </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col
-                  cols="12"
-                  sm="12"
-                  md="12"
-                >
+                <v-col cols="12" md="12" sm="12">
                 <v-text-field
                     label="タイトル"
-                    persistent-hint
                     :rules="[rules.required]"
                     v-model="currentTask.title"
                 ></v-text-field>
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="12"
-                  md="12"
-                >
+                <v-col cols="12" md="12" sm="12">
                 <v-select
                     label="カテゴリ"
                     :items="categories"
@@ -35,8 +26,7 @@
                 </v-select>
 
                 </v-col>
-                <v-col cols="6">
-
+                <v-col cols="6" md="6" sm="6">
                   <v-text-field
                     label="期日"
                     type="date"
@@ -44,47 +34,58 @@
                   >
                 </v-text-field>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" md="12" sm="12">
                     <v-textarea
                     label="内容"
                     v-model="currentTask.description"
                     ></v-textarea>
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="12"
-                >
-                </v-col>
-
               </v-row>
             </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              @click="$emit('cancel')"
+                class="bg-grey-lighten-3"
+                @click="$emit('cancel')"
             >
               CANCEL
             </v-btn>
             <v-btn
+                class="bg-light-blue"
                 @click="confirmTask"
             >
                 OK
             </v-btn>
           </v-card-actions>
-        </v-card>
 
+          <v-card-text>
+            <v-container>
+                <v-row>
+                    <v-col cols="12" md="12" sm="12">
+                        <MemoList
+                            :memos="currentTask.memos"
+                        >
+                    </MemoList>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-card-text>
+        </v-card>
     </v-row>
 </template>
 <script>
+import MemoList from '../lists/MemoList.vue'
 export default {
+    components: {
+        MemoList
+    },
     data() {
         return {
             title: '',
             due_date: '',
             category_id: '',
             description: '',
-            newDialog: false,
             currentTask: this.task,
             rules: {
                 required: value => !!value || 'Field is required',

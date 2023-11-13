@@ -71,8 +71,7 @@
                             <v-btn
                                 prepend-icon="mdi-magnify"
                                 @click="search"
-                                class="mr-5"
-                                color="info"
+                                class="mr-5 bg-light-blue"
                             >
                                 検索
                             </v-btn>
@@ -102,6 +101,7 @@
                     <tbody>
                         <tr v-for="task in displayTasks" :key="task.id" :class="{'bg-lightgray': task.completed_at}">
                             <td>
+                                <!-- ここ確認 -->
                                 <v-checkbox
                                     v-if="!task.completed_at"
                                     @click="complete(task.id)"
@@ -148,7 +148,8 @@
 
                 <v-dialog
                     v-model="taskFormDialog"
-                    width="1024"
+                    persistent
+                    scrollable
                 >
                     <TaskForm
                         :isNew="isNewTask"
@@ -183,6 +184,7 @@
 import DeleteButton from './buttons/DeleteButton.vue';
 import TaskForm from './forms/TaskForm.vue';
 import CategoryList from './lists/CategoryList.vue';
+import { dateFormat } from './dateFormat.js';
 
 export default {
     components: {
@@ -227,21 +229,13 @@ export default {
 
     },
     methods: {
-        dateFormat(date) {
-            const dt = new Date(date);
-            const y = dt.getFullYear();
-            const m = (dt.getMonth() + 1).toString().padStart(2, '0');
-            const d = dt.getDate().toString().padStart(2, '0');
-            return `${y}/${m}/${d}`;
-        },
-
+        dateFormat,
         // タスク一覧取得
         fetchTasks() {
             axios.get('/api/v1/tasks').then(res => {
                 this.tasks = res.data.tasks;
                 this.pageCalculation(this.tasks);
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.error('Error fetching tasks:', error);
             });
         },
@@ -254,7 +248,6 @@ export default {
         },
 
         updateTask(task) {
-            console.log(task);
             this.selectedTask = task;
             this.isNewTask = false;
             this.taskFormDialog = true;
@@ -343,8 +336,10 @@ export default {
 
         // ページネーション
         pageCalculation(tasks) {
-            (Math.ceil(tasks.length/this.pageSize));
             this.length = Math.ceil(tasks.length/this.pageSize);
+            // シャローコピー・ディープコピー
+            // バックエンドの処理の負荷軽減
+            // 要件によって変える必要がある、バックエンドに書く方法
             this.displayTasks = tasks.slice(this.pageSize*(this.page -1), this.pageSize*(this.page));
         },
         pageChange(pageNumber) {

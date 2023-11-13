@@ -36,6 +36,7 @@ class TaskController extends Controller
         $tasks = $q->with(['category:id,name'])
                 ->select($this->listPageColumns)
                 ->withCount('memos')
+                ->with('memos')
                 ->orderByDefault()
                 ->get();
 

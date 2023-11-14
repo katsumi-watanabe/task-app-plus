@@ -9,45 +9,7 @@
         >
             カテゴリ一覧
         </v-btn>
-        <v-menu
-          bottom
-          offset-y
-        >
-          <v-list>
-            <v-list-item
-              v-for="(item, i) in items"
-              :key="i"
-              @click="() => {}"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        <v-dialog
-          v-model="CatListDlg"
-          fullscreen
-          hide-overlay
-          transition="dialog-bottom-transition"
-          scrollable
-        >
-          <v-card tile>
-            <v-toolbar
-              flat
-              dark
-              color="primary"
-            >
-              <v-btn
-                icon
-                dark
-                @click="dialog = false"
-              >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-toolbar>
-            <div style="flex: 1 1 auto;"></div>
-          </v-card>
-        </v-dialog>
-
+        <!-- メソッド名修正 -->
         <v-dialog
           v-model="CatListParDlg"
           width="800px"
@@ -60,15 +22,15 @@
             <v-card-text class="text-right">
 
                 <v-btn
-                class="bg-grey white mb-3 mr-3"
-                @click="CatListParDlg = false"
+                    class="bg-grey white mb-3 mr-3"
+                    @click="CatListParDlg = false"
                 >
                     タスク一覧
                 </v-btn>
                 <v-btn
-                class="bg-success white mb-3"
-                color="white"
-                @click="createCategory"
+                    class="bg-success white mb-3"
+                    color="white"
+                    @click="createCategory"
                 >
                 <v-icon>
                     mdi-plus-circle-outline
@@ -144,21 +106,19 @@ export default {
     return {
         categories: '',
         name: '',
-        CatListDlg: false,
         CatListParDlg: false,
         catListChildDlg: false,
         catDeleteDlg: false,
 
-        rules: {
-            required: value => !!value || 'Field is required',
-        },
 
         selectedCategory: '',
         isNewCategory: true,
     }
     },
     mounted() {
-       this.fetchCategories();
+        // 読み込み時にマウントされる,認識しておく！
+        // ２回呼び出されている
+        this.fetchCategories();
     },
     methods: {
         fetchCategories() {
@@ -169,27 +129,18 @@ export default {
             });
         },
 
-        confirmNewCategory(e) {
-            const params = {
-                name: e.name,
-            };
-            axios.post(`/api/v1/categories`, params).then(res => {
-                this.categories = res.data.categories;
-                this.catListChildDlg = false;
-            })
-        },
 
         // 子コンポーネントへのデータ引数
         createCategory() {
             this.selectedCategory = { name: '' };
-            this.catListChildDlg = true;
             this.isNewCategory = true;
+            this.catListChildDlg = true;
         },
 
         updateCategory(category) {
             this.selectedCategory = category;
-            this.catListChildDlg = true;
             this.isNewCategory = false;
+            this.catListChildDlg = true;
         },
 
         // 親コンポーネントで実行
@@ -212,9 +163,8 @@ export default {
         },
 
         confirmDeleteCategory(category) {
-            axios.delete(`/api/v1/categories/${category.id}`, category).then(() => {
+            axios.delete(`/api/v1/categories/${category.id}`).then(() => {
                 this.fetchCategories();
-                this.catListChildDlg = false;
             }).catch(error => {
                 console.error('Error updating category:', error);
             })

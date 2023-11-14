@@ -58,27 +58,17 @@
                 OK
             </v-btn>
           </v-card-actions>
-
-          <v-card-text v-if="memos != null">
+          <!-- 新規登録時、タスクメモは登録できない -->
+          <v-card-text v-if="isNew == false">
             <div><h3 class="text-center my-10" style="font-size: 2rem;">タスクメモ一覧</h3></div>
             <v-container>
                 <v-row class="bg-grey-lighten-4">
                     <v-col cols="12" md="12" sm="12">
-                        <div class="text-right mb-3">
-                            <v-btn
-                                class="bg-success white"
-                                @click="createTaskMemo"
-                            >
-                                <v-icon>
-                                    mdi-plus-circle-outline
-                                </v-icon>
-                                新規作成
-                            </v-btn>
-                        </div>
+
                         <MemoList
-                            :memos="memos"
+                            :task="task"
                         >
-                    </MemoList>
+                        </MemoList>
                     </v-col>
                 </v-row>
             </v-container>
@@ -86,31 +76,14 @@
         </v-card>
     </v-row>
 
-    <v-dialog
-        v-model="taskMemoListChildDlg"
-        max-width="500px"
-    >
-        <TaskMemoForm
-            @cancel="taskMemoListChildDlg = false"
-            :isNewMemo="isNewTaskMemo"
-            :taskMemo="selectedTaskMemo"
-            :task="task"
-            @create="confirmNewTaskMemo"
-            @update="confirmUpdateTaskMemo"
-        >
 
-        </TaskMemoForm>
-
-    </v-dialog>
 </template>
 <script>
 import MemoList from '../lists/MemoList.vue'
-import TaskMemoForm from '../forms/TaskMemoForm.vue'
 
 export default {
     components: {
         MemoList,
-        TaskMemoForm,
     },
     data() {
         return {
@@ -124,15 +97,7 @@ export default {
                 required: value => !!value || 'Field is required',
             },
 
-            // タスクメモ
-            selectedTaskMemo: '',
-            content: '',
-            isNewMemo: this.isNewTaskMemo,
-            taskMemoListChildDlg: false,
         };
-    },
-    mounted() {
-        this.fetchTaskMemos();
     },
     emits: ['cancel', 'create', 'update'],
     props: {
@@ -148,47 +113,12 @@ export default {
     },
 
     methods: {
-        fetchTaskMemos() {
-            console.log(this.task);
-            axios.get(`/api/v1/tasks/${this.task.id}/memos`).then(res => {
-                this.memos = res.data.memos;
-            }).catch(error => {
-                console.error('Error fetching memos:', error);
-            });
-        },
-
         confirmTask() {
             if (this.isNew) {
                 this.$emit('create', this.currentTask);
             } else {
                 this.$emit('update', this.currentTask);
             }
-        },
-
-        createTaskMemo() {
-            this.selectedTaskMemo = { content: '' };
-            this.taskMemoListChildDlg = true;
-            this.isNewTaskMemo = true;
-        },
-
-        confirmNewTaskMemo(task_id, memo) {
-            const params = {
-                content: memo,
-            };
-            axios.post(`/api/v1/tasks/${task_id}/memos`, params).then(() => {
-                this.fetchTaskMemos();
-                this.taskMemoListChildDlg = false;
-            }).catch(error => {
-                console.error('Error creating new task-memo:', error);
-            })
-        },
-
-        confirmUpdateTaskMemo(task_id, memo) {
-            axios.put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo).then(() => {
-                this.taskMemoListChildDlg = false;
-            }).catch(error => {
-                console.error('Error creating new task-memo:', error);
-            })
         },
     },
 };

@@ -21,7 +21,7 @@
                 label="コンテンツ"
                 persistent-hint
                 :rules="[rules.required]"
-                v-model="currentTaskMemo"
+                v-model="currentTaskMemo.content"
             ></v-text-field>
             </v-col>
         </v-row>
@@ -50,20 +50,21 @@
 export default {
     emits: ['cancel', 'create', 'update'],
     props: {
-        isNewMemo: {
+        isNew: {
             type: Boolean,
         },
         task: {
             type: Object,
         },
-        memo: {
+        taskMemo: {
             type: Object,
         }
     },
 
     data() {
         return {
-            currentTaskMemo: this.memo,
+            currentTaskMemo: this.taskMemo,
+            content: '',
             rules: {
                 required: value => !!value || 'Field is required',
             },
@@ -71,7 +72,7 @@ export default {
     },
     methods: {
         confirmTaskMemo() {
-            if (this.isNewMemo) {
+            if (this.isNew) {
                 this.$emit('create', this.task.id, this.currentTaskMemo);
             } else {
                 this.$emit('update', this.task.id, this.currentTaskMemo);

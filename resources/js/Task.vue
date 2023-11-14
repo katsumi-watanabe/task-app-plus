@@ -14,7 +14,9 @@
             </v-app-bar-title>
 
             <template v-slot:append>
-                <CategoryList></CategoryList>
+                <CategoryList
+                    :categories=categories
+                ></CategoryList>
 
                 <v-btn
                     class="bg-success white ml-8"
@@ -247,8 +249,7 @@ export default {
                 keyword: keyword,
                 category: category,
                 }
-            })
-            .then(res => {
+            }).then(res => {
                 this.tasks = res.data.tasks;
                 this.pageCalculation(this.tasks);
             }).catch(error => {

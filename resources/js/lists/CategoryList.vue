@@ -102,20 +102,18 @@ export default {
         CategoryDeleteButton,
     },
     data () {
-    return {
-        categories: '',
-        name: '',
-        categoryListParentDialog: false,
-        categoryListChildDialog: false,
-
-        selectedCategory: '',
-        isNewCategory: true,
-    }
+        return {
+            name: '',
+            categoryListParentDialog: false,
+            categoryListChildDialog: false,
+            selectedCategory: '',
+            isNewCategory: true,
+        }
     },
-    mounted() {
-        // 読み込み時にマウントされる,認識しておく！
-        // ２回呼び出されている
-        this.fetchCategories();
+    props: {
+        categories: {
+            type: Object,
+        },
     },
     methods: {
         fetchCategories() {

@@ -1,5 +1,5 @@
 <template>
-    <v-row justify="center">
+    <v-row>
         <v-dialog
             v-model="taskMemoDeleteDialog"
             width="auto"
@@ -15,7 +15,7 @@
         </template>
         <v-card>
             <v-card-title class="text-h5">
-            本当に削除しますか？
+                本当に削除しますか？
             </v-card-title>
             <v-card-text>削除する場合は[OK]、削除しない場合は[CANCEL]をクリックしてください。</v-card-text>
             <v-card-actions>

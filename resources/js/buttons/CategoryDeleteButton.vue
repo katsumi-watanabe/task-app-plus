@@ -1,5 +1,5 @@
 <template>
-    <v-row justify="center">
+    <v-row>
         <v-dialog
             v-model="categoryDeleteDialog"
             width="auto"

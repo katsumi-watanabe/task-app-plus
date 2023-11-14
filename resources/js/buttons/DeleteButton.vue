@@ -1,14 +1,14 @@
 <template>
     <v-row justify="center">
         <v-dialog
-        v-model="deleteDialog"
-        persistent
-        width="auto"
+            v-model="deleteDialog"
+            width="auto"
+            hide-overlay
         >
         <template v-slot:activator="{ props }">
             <v-btn
-            color="red"
-            v-bind="props"
+                color="red"
+                v-bind="props"
             >
             <v-icon>mdi-delete</v-icon>
 
@@ -22,11 +22,13 @@
             <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+                class="bg-grey-lighten-3"
                 @click="deleteDialog = false"
             >
                 CANCEL
             </v-btn>
             <v-btn
+                class="bg-light-blue"
                 @click="confirmDelete()"
             >
                 OK

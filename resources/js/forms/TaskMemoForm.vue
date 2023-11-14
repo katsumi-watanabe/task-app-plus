@@ -1,0 +1,82 @@
+<template>
+    <v-card>
+        <v-card-title>
+        <span>タスクメモ新規登録</span>
+        <v-spacer></v-spacer>
+        <v-menu
+            bottom
+            left
+        >
+        </v-menu>
+        </v-card-title>
+        <v-card-text>
+        <v-container>
+        <v-row>
+            <v-col
+            cols="12"
+            sm="12"
+            md="12"
+            >
+            <v-text-field
+                label="コンテンツ"
+                persistent-hint
+                :rules="[rules.required]"
+                v-model="currentTaskMemo"
+            ></v-text-field>
+            </v-col>
+        </v-row>
+        </v-container>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="$emit('cancel')"
+        >
+        CANCEL
+        </v-btn>
+        <v-btn
+            class="bg-light-blue"
+            variant="text"
+            @click="confirmTaskMemo"
+        >
+        OK
+        </v-btn>
+    </v-card-actions>
+    </v-card>
+</template>
+<script>
+export default {
+    emits: ['cancel', 'create', 'update'],
+    props: {
+        isNewMemo: {
+            type: Boolean,
+        },
+        task: {
+            type: Object,
+        },
+        memo: {
+            type: Object,
+        }
+    },
+
+    data() {
+        return {
+            currentTaskMemo: this.memo,
+            rules: {
+                required: value => !!value || 'Field is required',
+            },
+        }
+    },
+    methods: {
+        confirmTaskMemo() {
+            if (this.isNewMemo) {
+                this.$emit('create', this.task.id, this.currentTaskMemo);
+            } else {
+                this.$emit('update', this.task.id, this.currentTaskMemo);
+            }
+        }
+    }
+}
+</script>

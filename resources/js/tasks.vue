@@ -115,13 +115,11 @@
                                     hide-details
                                 ></v-checkbox>
                             </td>
-                            <td>{{ task.title }}</td>
-                            <td>{{ task.category.name }}</td>
-                            <td>{{ task.description }}</td>
-                            <td v-if="!!task.due_date">{{ dateFormat(task.due_date) }}</td>
-                            <td v-else>-</td>
-                            <td v-if="!!task.completed_at">{{ dateFormat(task.completed_at) }}</td>
-                            <td v-else>-</td>
+                            <td>{{ !!task.title ? task.title : '' }}</td>
+                            <td>{{ !!task.category ? task.category.name : '' }}</td>
+                            <td>{{ !!task.description ? task.description : '' }}</td>
+                            <td>{{ !!task.due_date ? dateFormat(task.due_date) : '-' }}</td>
+                            <td>{{ !!task.completed_at ? dateFormat(task.completed_at) : '-' }}</td>
                             <td>{{ task.memos_count }}</td>
                             <td>
                                 <v-btn
@@ -148,7 +146,6 @@
 
                 <v-dialog
                     v-model="taskFormDialog"
-                    persistent
                     scrollable
                 >
                     <TaskForm
@@ -221,12 +218,10 @@ export default {
     mounted() {
         axios.get('/api/v1/categories').then(res => {
             this.categories = res.data.categories;
-        })
-        .catch(error => {
+        }).catch(error => {
             console.error('Error fetching categories:', error);
         });
         this.fetchTasks();
-
     },
     methods: {
         dateFormat,
@@ -310,8 +305,7 @@ export default {
             .then(res => {
                 this.displayTasks = res.data.tasks;
                 this.pageCalculation(this.displayTasks);
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.error(error);
             });
         },
@@ -327,8 +321,7 @@ export default {
             axios.put(`/api/v1/tasks/${id}/complete`).then(res => {
                 this.fetchTasks();
             })
-        },
-        cancel(id) {
+        },cancel(id) {
             axios.put(`/api/v1/tasks/${id}/cancel`).then(res => {
                 this.fetchTasks();
             })

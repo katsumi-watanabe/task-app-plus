@@ -1,25 +1,25 @@
 <template>
-    <v-table class="bg-grey-lighten-4">
+    <v-table>
         <thead>
             <tr>
-            <th class="text-left">
-                日付
-            </th>
-            <th class="text-left">
-                内容
-            </th>
-            <th class="text-left">
-                編集
-            </th>
-            <th class="text-left">
-                削除
-            </th>
+                <th class="text-left">
+                    日付
+                </th>
+                <th class="text-left">
+                    内容
+                </th>
+                <th class="text-left">
+                    編集
+                </th>
+                <th class="text-left">
+                    削除
+                </th>
             </tr>
         </thead>
         <tbody>
             <tr
-            v-for="memo in memos"
-            :key="memo.id"
+                v-for="memo in memos"
+                :key="memo.id"
             >
                 <td>{{ dateFormat(memo.created_at) }}</td>
                 <td>{{ memo.content }}</td>

@@ -2,7 +2,6 @@
     <v-row justify="center">
         <v-dialog
             v-model="catDeleteDlg"
-            persistent
             width="auto"
         >
         <template v-slot:activator="{ props }">

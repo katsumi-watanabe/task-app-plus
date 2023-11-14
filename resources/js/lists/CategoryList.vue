@@ -113,7 +113,7 @@
           </v-card>
         </v-dialog>
         <v-dialog
-          v-model="CatListChildDlg"
+          v-model="catListChildDlg"
           max-width="500px"
         >
 
@@ -146,7 +146,7 @@ export default {
         name: '',
         CatListDlg: false,
         CatListParDlg: false,
-        CatListChildDlg: false,
+        catListChildDlg: false,
         catDeleteDlg: false,
 
         rules: {
@@ -158,12 +158,7 @@ export default {
     }
     },
     mounted() {
-        axios.get('/api/v1/categories').then(res => {
-            this.categories = res.data.categories;
-        })
-        .catch(error => {
-            console.error('Error fetching categories:', error);
-        });
+       this.fetchCategories();
     },
     methods: {
         fetchCategories() {
@@ -180,20 +175,20 @@ export default {
             };
             axios.post(`/api/v1/categories`, params).then(res => {
                 this.categories = res.data.categories;
-                this.CatListChildDlg = false;
+                this.catListChildDlg = false;
             })
         },
 
         // 子コンポーネントへのデータ引数
         createCategory() {
             this.selectedCategory = { name: '' };
-            this.CatListChildDlg = true;
+            this.catListChildDlg = true;
             this.isNewCategory = true;
         },
 
         updateCategory(category) {
             this.selectedCategory = category;
-            this.CatListChildDlg = true;
+            this.catListChildDlg = true;
             this.isNewCategory = false;
         },
 
@@ -201,7 +196,7 @@ export default {
         confirmNewCategory(category) {
             axios.post('/api/v1/categories', category).then(() => {
                 this.fetchCategories();
-                this.CatListChildDlg = false;
+                this.catListChildDlg = false;
             }).catch(error => {
                 console.error('Error creating new category:', error);
             })
@@ -210,7 +205,7 @@ export default {
         confirmUpdateCategory(category) {
             axios.put(`/api/v1/categories/${category.id}`, category).then(() => {
                 this.fetchCategories();
-                this.CatListChildDlg = false;
+                this.catListChildDlg = false;
             }).catch(error => {
                 console.error('Error updating category:', error);
             })
@@ -219,7 +214,7 @@ export default {
         confirmDeleteCategory(category) {
             axios.delete(`/api/v1/categories/${category.id}`, category).then(() => {
                 this.fetchCategories();
-                this.CatListChildDlg = false;
+                this.catListChildDlg = false;
             }).catch(error => {
                 console.error('Error updating category:', error);
             })
@@ -227,7 +222,7 @@ export default {
 
         confirmCancel() {
             this.fetchCategories();
-            this.CatListChildDlg = false;
+            this.catListChildDlg = false;
         },
     }
 }

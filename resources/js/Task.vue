@@ -292,9 +292,8 @@ export default {
         },
 
         confirmDelete(task) {
-            axios.delete(`/api/v1/tasks/${task.id}`, task).then(() => {
+            axios.delete(`/api/v1/tasks/${task.id}`).then(() => {
                 this.fetchTasks();
-                this.deleteDialog = false;
             }).catch(error => {
                 console.error('Error updating task:', error);
             })

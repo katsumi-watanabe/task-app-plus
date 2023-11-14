@@ -36,17 +36,17 @@
                 <td>{{ memo.content }}</td>
                 <td>
                     <v-btn
-                        class="bg-success white ml-8"
+                        class="bg-success white"
                         @click="updateTaskMemo(memo)"
                     >
                         <v-icon>mdi-table-edit</v-icon>
                     </v-btn></td>
                 <td>
-                    <v-btn
-                        color="red"
+                    <TaskMemoDeleteButton
+                        @delete="confirmDelete"
+                        :memo="memo"
                     >
-                    <v-icon>mdi-delete</v-icon>
-                    </v-btn>
+                    </TaskMemoDeleteButton>
                 </td>
             </tr>
         </tbody>
@@ -71,11 +71,13 @@
 </template>
 <script>
 import TaskMemoForm from '../forms/TaskMemoForm.vue'
+import TaskMemoDeleteButton from '../buttons/TaskMemoDeleteButton.vue'
 import { dateFormat } from '../dateFormat'
 
 export default {
     components: {
         TaskMemoForm,
+        TaskMemoDeleteButton,
     },
     data() {
         return {
@@ -133,6 +135,14 @@ export default {
         confirmCancelTaskMemo() {
             this.fetchTaskMemos();
             this.taskMemoListChildDlg = false;
+        },
+
+        confirmDelete(task_id, memo_id) {
+            axios.delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`).then(() => {
+                this.fetchTaskMemos();
+            }).catch(error => {
+                console.error('Error updating task-memo:', error);
+            })
         },
     }
 }

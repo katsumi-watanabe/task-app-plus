@@ -65,11 +65,10 @@
         </v-card-actions>
         <!-- 新規登録時、タスクメモは登録できない -->
         <v-card-text v-if="isNew == false">
-            <div><h3 class="text-center my-10" style="font-size: 2rem;">タスクメモ一覧</h3></div>
+            <div><h3 class="text-center my-1" style="font-size: 2rem;">タスクメモ一覧</h3></div>
             <v-container>
                 <v-row class="bg-grey-lighten-4">
                     <v-col cols="12" md="12" sm="12">
-
                         <MemoList
                             :task="task"
                         >

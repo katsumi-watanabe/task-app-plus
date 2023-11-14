@@ -1,7 +1,7 @@
 <template>
     <v-row justify="center">
         <v-dialog
-            v-model="catDeleteDlg"
+            v-model="categoryDeleteDialog"
             width="auto"
         >
         <template v-slot:activator="{ props }">
@@ -22,7 +22,7 @@
             <v-spacer></v-spacer>
             <v-btn
                 class="bg-grey-lighten-3"
-                @click="catDeleteDlg = false"
+                @click="categoryDeleteDialog = false"
             >
                 CANCEL
             </v-btn>
@@ -48,7 +48,7 @@ export default {
     },
     data() {
         return {
-            catDeleteDlg: false,
+            categoryDeleteDialog: false,
         };
     },
 

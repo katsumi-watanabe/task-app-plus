@@ -1,12 +1,17 @@
 <template>
-    <v-row justify="center">
-        <v-card width="90vh" height="90vh" style="overflow: scroll;">
-          <v-card-title class="mt-5">
+    <v-card width="90vh" height="90vh" style="overflow: scroll;">
+        <v-card-title>
             <span class="text-h5">新規登録</span>
-          </v-card-title>
-          <v-card-text>
+            <v-spacer></v-spacer>
+            <v-menu
+                bottom
+                left
+            >
+            </v-menu>
+        </v-card-title>
+        <v-card-text>
             <v-container>
-              <v-row>
+            <v-row>
                 <v-col cols="12" md="12" sm="12">
                 <v-text-field
                     label="タイトル"
@@ -27,11 +32,11 @@
 
                 </v-col>
                 <v-col cols="6" md="6" sm="6">
-                  <v-text-field
+                <v-text-field
                     label="期日"
                     type="date"
                     v-model="currentTask.due_date"
-                  >
+                >
                 </v-text-field>
                 </v-col>
                 <v-col cols="12" md="12" sm="12">
@@ -40,16 +45,16 @@
                     v-model="currentTask.description"
                     ></v-textarea>
                 </v-col>
-              </v-row>
+            </v-row>
             </v-container>
-          </v-card-text>
-          <v-card-actions>
+        </v-card-text>
+        <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
                 class="bg-grey-lighten-3"
                 @click="$emit('cancel')"
             >
-              CANCEL
+            CANCEL
             </v-btn>
             <v-btn
                 class="bg-light-blue"
@@ -57,9 +62,9 @@
             >
                 OK
             </v-btn>
-          </v-card-actions>
-          <!-- 新規登録時、タスクメモは登録できない -->
-          <v-card-text v-if="isNew == false">
+        </v-card-actions>
+        <!-- 新規登録時、タスクメモは登録できない -->
+        <v-card-text v-if="isNew == false">
             <div><h3 class="text-center my-10" style="font-size: 2rem;">タスクメモ一覧</h3></div>
             <v-container>
                 <v-row class="bg-grey-lighten-4">
@@ -73,10 +78,7 @@
                 </v-row>
             </v-container>
         </v-card-text>
-        </v-card>
-    </v-row>
-
-
+    </v-card>
 </template>
 <script>
 import MemoList from '../lists/MemoList.vue'

@@ -5,13 +5,13 @@
       >
         <v-btn
           class="bg-grey white"
-          @click="CatListParDlg = true"
+          @click="categoryListParentDialog = true"
         >
             カテゴリ一覧
         </v-btn>
         <!-- メソッド名修正 -->
         <v-dialog
-          v-model="CatListParDlg"
+          v-model="categoryListParentDialog"
           width="800px"
         >
           <v-card>
@@ -23,7 +23,7 @@
 
                 <v-btn
                     class="bg-grey white mb-3 mr-3"
-                    @click="CatListParDlg = false"
+                    @click="categoryListParentDialog = false"
                 >
                     タスク一覧
                 </v-btn>
@@ -62,7 +62,6 @@
                             <td class="text-left">
                                 <CategoryDeleteButton
                                     :category="category"
-                                    @cancel="CategoryDeleteButton = false"
                                     @delete="confirmDeleteCategory"
                                 ></CategoryDeleteButton>
                             </td>
@@ -75,7 +74,7 @@
           </v-card>
         </v-dialog>
         <v-dialog
-          v-model="catListChildDlg"
+          v-model="categoryListChildDialog"
           max-width="500px"
         >
 
@@ -106,10 +105,8 @@ export default {
     return {
         categories: '',
         name: '',
-        CatListParDlg: false,
-        catListChildDlg: false,
-        catDeleteDlg: false,
-
+        categoryListParentDialog: false,
+        categoryListChildDialog: false,
 
         selectedCategory: '',
         isNewCategory: true,
@@ -129,25 +126,22 @@ export default {
             });
         },
 
-
-        // 子コンポーネントへのデータ引数
         createCategory() {
             this.selectedCategory = { name: '' };
             this.isNewCategory = true;
-            this.catListChildDlg = true;
+            this.categoryListChildDialog = true;
         },
 
         updateCategory(category) {
             this.selectedCategory = category;
             this.isNewCategory = false;
-            this.catListChildDlg = true;
+            this.categoryListChildDialog = true;
         },
 
-        // 親コンポーネントで実行
         confirmNewCategory(category) {
             axios.post('/api/v1/categories', category).then(() => {
                 this.fetchCategories();
-                this.catListChildDlg = false;
+                this.categoryListChildDialog = false;
             }).catch(error => {
                 console.error('Error creating new category:', error);
             })
@@ -156,7 +150,7 @@ export default {
         confirmUpdateCategory(category) {
             axios.put(`/api/v1/categories/${category.id}`, category).then(() => {
                 this.fetchCategories();
-                this.catListChildDlg = false;
+                this.categoryListChildDialog = false;
             }).catch(error => {
                 console.error('Error updating category:', error);
             })
@@ -172,7 +166,7 @@ export default {
 
         confirmCancel() {
             this.fetchCategories();
-            this.catListChildDlg = false;
+            this.categoryListChildDialog = false;
         },
     }
 }

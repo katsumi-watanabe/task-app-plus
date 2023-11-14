@@ -1,7 +1,7 @@
 <template>
     <v-app class="d-block">
 
-        <v-app-bar color="primary">
+        <v-app-bar color="indigo">
             <template v-slot:prepend>
                 <v-btn class="bg-info" @click="changeDisplay">
                     <v-icon>mdi-filter</v-icon>
@@ -28,21 +28,24 @@
             </template>
         </v-app-bar>
 
-        <v-main>
+        <v-main class="bg-indigo-lighten-5">
             <v-container>
                 <div v-if="displaySearchBox == true">
                     <v-row>
                         <v-col cols="6">
                         <v-select
+                            class="bg-white"
                             label="完了ステータス"
                             :items="statusItems"
                             v-model="selectedStatus"
+                            hide-details="auto"
                         >
                         </v-select>
                         </v-col>
 
                         <v-col cols="6">
                             <v-select
+                                class="bg-white"
                                 label="カテゴリ"
                                 :items="categories"
                                 item-title="name"
@@ -51,6 +54,7 @@
                                 chips
                                 multiple
                                 v-model="selectedCategory"
+                                hide-details="auto"
                             >
                             </v-select>
                         </v-col>
@@ -59,18 +63,20 @@
                     <v-row>
                         <v-col cols="12">
                             <v-text-field
+                                class="bg-white"
                                 label="フリーワード検索"
                                 name="keyword_search"
                                 v-model="keyword_search"
+                                hide-details="auto"
                             ></v-text-field>
                     </v-col>
                     </v-row>
 
-                    <v-row>
+                    <v-row class="mb-3">
                         <v-col cols="12">
                             <v-btn
                                 prepend-icon="mdi-magnify"
-                                @click="search"
+                                @click="fetchTasks"
                                 class="mr-5 bg-light-blue"
                             >
                                 検索
@@ -99,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="task in displayTasks" :key="task.id" :class="{'bg-lightgray': task.completed_at}">
+                        <tr v-for="task in tasks" :key="task.id" :class="{'bg-lightgray': task.completed_at}">
                             <td>
                                 <!-- ここ確認 -->
                                 <v-checkbox
@@ -123,30 +129,38 @@
                             <td>{{ task.memos_count }}</td>
                             <td>
                                 <v-btn
-                                    class="bg-success white ml-8"
+                                    class="bg-success white"
                                     @click="updateTask(task)"
                                 >
                                     <v-icon>mdi-table-edit</v-icon>
                                 </v-btn>
                             </td>
-                            <td><DeleteButton :task="task" @cancel="deleteDialog = false" @delete="confirmDelete"></DeleteButton></td>
+                            <!-- キャンセル不要？ -->
+                            <!-- 1回以上削除がクリックできてしまう→一回しか押せないような処理設定が必要？ -->
+                            <td>
+                                <DeleteButton
+                                    :task="task"
+                                    @delete="confirmDelete"
+                                ></DeleteButton>
+                            </td>
                         </tr>
                     </tbody>
                 </v-table>
-                <v-content>
-                    <div class="d-flex justify-end mt-2 mb-6">
-                        <v-pagination
-                            v-model="page"
-                            :length="length"
-                            @click ="pageChange(page)"
-                        >
-                        </v-pagination>
-                    </div>
-                </v-content>
-
+                <div class="d-flex justify-end mt-2 mb-6">
+                    <v-pagination
+                        v-model="page"
+                        :length="length"
+                        @click ="pageChange(page)"
+                    >
+                    </v-pagination>
+                </div>
+                <div>
+                <v-row
+                    justify="center"
+                >
                 <v-dialog
                     v-model="taskFormDialog"
-                    scrollable
+                    width="auto"
                 >
                     <TaskForm
                         :isNew="isNewTask"
@@ -157,6 +171,8 @@
                         @update="confirmUpdateTask"
                     ></TaskForm>
                 </v-dialog>
+                </v-row>
+            </div>
             </v-container>
         </v-main>
 
@@ -164,7 +180,7 @@
             Button Navigation
         </v-bottom-navigation>
 
-        <v-footer color="primary" app>
+        <v-footer color="indigo" app>
             Footer
         </v-footer>
 
@@ -173,7 +189,7 @@
 
 <style>
 .bg-lightgray {
-    background-color: #F5F5F5;
+    background-color: #C5CAE9;
 }
 </style>
 
@@ -198,12 +214,8 @@ export default {
             page: 1,
             pageSize: 10,
             length:0,
-            displayTasks: [],
 
-            // ダイアログ
-            deleteDialog: false,
             taskFormDialog: false,
-
             selectedTask: '',
             isNewTask: true,
 
@@ -225,9 +237,18 @@ export default {
     },
     methods: {
         dateFormat,
-        // タスク一覧取得
         fetchTasks() {
-            axios.get('/api/v1/tasks').then(res => {
+            const selectedStatus = this.selectedStatus;
+            const keyword = this.keyword_search;
+            const category = this.selectedCategory;
+            axios.get('/api/v1/tasks', {
+                params: {
+                status: selectedStatus,
+                keyword: keyword,
+                category: category,
+                }
+            })
+            .then(res => {
                 this.tasks = res.data.tasks;
                 this.pageCalculation(this.tasks);
             }).catch(error => {
@@ -235,7 +256,6 @@ export default {
             });
         },
 
-        // 子コンポーネントへのデータ引数
         createTask() {
             this.selectedTask = { title: '', description: '', due_date: '', category_id: '' };
             this.isNewTask = true;
@@ -265,19 +285,14 @@ export default {
                 console.error('Error updating task:', error);
             })
         },
+        // コピーしたものを編集する→OKで反映
         confirmCancel() {
             this.fetchTasks();
             this.taskFormDialog = false;
         },
 
         confirmDelete(task) {
-            const params = {
-                title: this.title,
-                description: this.description,
-                due_date: this.due_date,
-                category_id: this.category_id,
-            }
-            axios.delete(`/api/v1/tasks/${task.id}`, params).then(() => {
+            axios.delete(`/api/v1/tasks/${task.id}`, task).then(() => {
                 this.fetchTasks();
                 this.deleteDialog = false;
             }).catch(error => {
@@ -287,33 +302,15 @@ export default {
 
         // 検索ボックス表示切替
         changeDisplay() {
-            this.displaySearchBox == true ? this.displaySearchBox = false : this.displaySearchBox = true;
+            this.displaySearchBox = !this.displaySearchBox;
         },
 
-        // 検索関連
-        search() {
-            const selectedStatus = this.selectedStatus;
-            const keyword = this.keyword_search;
-            const category = this.selectedCategory;
-            axios.get('/api/v1/tasks', {
-                params: {
-                status: selectedStatus,
-                keyword: keyword,
-                category: category,
-                }
-            })
-            .then(res => {
-                this.displayTasks = res.data.tasks;
-                this.pageCalculation(this.displayTasks);
-            }).catch(error => {
-                console.error(error);
-            });
-        },
+        // まとめれる！！！
         reset() {
             this.selectedStatus = [];
             this.keyword_search = "";
             this.selectedCategory = [];
-            this.search();
+            this.fetchTasks();
         },
 
         // タスク完了ステータス
@@ -321,7 +318,8 @@ export default {
             axios.put(`/api/v1/tasks/${id}/complete`).then(res => {
                 this.fetchTasks();
             })
-        },cancel(id) {
+        },
+        cancel(id) {
             axios.put(`/api/v1/tasks/${id}/cancel`).then(res => {
                 this.fetchTasks();
             })
@@ -330,14 +328,11 @@ export default {
         // ページネーション
         pageCalculation(tasks) {
             this.length = Math.ceil(tasks.length/this.pageSize);
-            // シャローコピー・ディープコピー
-            // バックエンドの処理の負荷軽減
-            // 要件によって変える必要がある、バックエンドに書く方法
-            this.displayTasks = tasks.slice(this.pageSize*(this.page -1), this.pageSize*(this.page));
+            this.tasks = tasks.slice(this.pageSize*(this.page -1), this.pageSize*(this.page));
         },
         pageChange(pageNumber) {
             this.page = pageNumber;
-            this.search();
+            this.fetchTasks();
         }
 
     },

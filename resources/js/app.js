@@ -1,7 +1,7 @@
 import './bootstrap';
 import { createApp } from 'vue';
 
-import Task from './Tasks.vue';
+import Task from './Task.vue';
 
 // Vuetify 使用時に必要なライブラリのインポート
 import 'vuetify/styles';

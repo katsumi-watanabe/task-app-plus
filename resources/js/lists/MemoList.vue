@@ -61,6 +61,7 @@
             :isNew="isNewTaskMemo"
             :taskMemo="selectedTaskMemo"
             :task="task"
+            :formTitle="formTitle"
             @create="confirmNewTaskMemo"
             @update="confirmUpdateTaskMemo"
         >
@@ -84,8 +85,9 @@ export default {
             memos: '',
             content: '',
             taskMemoListChildDlg: false,
-            selectedTaskMemo: '',
             isNewTaskMemo: false,
+            formTitle: '',
+            selectedTaskMemo: '',
         };
     },
     props: {
@@ -108,11 +110,13 @@ export default {
         },
         createTaskMemo() {
             this.selectedTaskMemo = { content: '' };
+            this.formTitle = 'タスクメモ新規登録画面';
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = true;
         },
         updateTaskMemo(memo) {
             this.selectedTaskMemo = memo;
+            this.formTitle = 'タスクメモ編集画面';
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = false;
         },

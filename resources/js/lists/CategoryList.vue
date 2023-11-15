@@ -47,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="category in categories" :key="category.id">
+                        <tr v-for="category in categoryList" :key="category.id">
                             <td class="text-left">
                                 {{ category.name }}
                             </td>
@@ -82,12 +82,12 @@
             @cancel="confirmCancel"
             :isNew="isNewCategory"
             :category="selectedCategory"
+            :formTitle="formTitle"
             @create="confirmNewCategory"
             @update="confirmUpdateCategory"
         >
         </CategoryForm>
         </v-dialog>
-
       </v-row>
     </div>
 </template>
@@ -106,8 +106,10 @@ export default {
             name: '',
             categoryListParentDialog: false,
             categoryListChildDialog: false,
-            selectedCategory: '',
             isNewCategory: true,
+            formTitle: '',
+            selectedCategory: '',
+            categoryList: [],
         }
     },
     props: {
@@ -115,10 +117,13 @@ export default {
             type: Object,
         },
     },
+    mounted() {
+        this.fetchCategories();
+    },
     methods: {
         fetchCategories() {
             axios.get('/api/v1/categories').then(res => {
-                this.categories = res.data.categories;
+                this.categoryList = res.data.categories;
             }).catch(error => {
                 console.error('Error fetching categories:', error);
             });
@@ -126,12 +131,14 @@ export default {
 
         createCategory() {
             this.selectedCategory = { name: '' };
+            this.formTitle = 'カテゴリ新規登録画面';
             this.isNewCategory = true;
             this.categoryListChildDialog = true;
         },
 
         updateCategory(category) {
             this.selectedCategory = category;
+            this.formTitle = 'カテゴリ編集画面';
             this.isNewCategory = false;
             this.categoryListChildDialog = true;
         },

@@ -16,6 +16,7 @@
             <template v-slot:append>
                 <CategoryList
                     :categories=categories
+                    @click="fetchCategories"
                 ></CategoryList>
 
                 <v-btn
@@ -168,6 +169,7 @@
                         :isNew="isNewTask"
                         :task="selectedTask"
                         :categories="categories"
+                        :formTitle="formTitle"
                         @cancel="confirmCancel"
                         @create="confirmNewTask"
                         @update="confirmUpdateTask"
@@ -218,8 +220,9 @@ export default {
             length:0,
 
             taskFormDialog: false,
-            selectedTask: '',
+            formTitle: '',
             isNewTask: true,
+            selectedTask: '',
 
             // 検索関連
             selectedStatus: [],
@@ -230,11 +233,7 @@ export default {
         };
     },
     mounted() {
-        axios.get('/api/v1/categories').then(res => {
-            this.categories = res.data.categories;
-        }).catch(error => {
-            console.error('Error fetching categories:', error);
-        });
+        this.fetchCategories();
         this.fetchTasks();
     },
     methods: {
@@ -257,14 +256,24 @@ export default {
             });
         },
 
+        fetchCategories() {
+            axios.get('/api/v1/categories').then(res => {
+                this.categories = res.data.categories;
+            }).catch(error => {
+                console.error('Error fetching categories:', error);
+            });
+        },
+
         createTask() {
             this.selectedTask = { title: '', description: '', due_date: '', category_id: '' };
+            this.formTitle = 'タスク新規登録画面';
             this.isNewTask = true;
             this.taskFormDialog = true;
         },
 
         updateTask(task) {
             this.selectedTask = task;
+            this.formTitle = 'タスク編集画面';
             this.isNewTask = false;
             this.taskFormDialog = true;
         },

@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-        <span>タスクメモ新規登録</span>
+        <span>{{ formTitle }}</span>
         <v-spacer></v-spacer>
         <v-menu
             bottom
@@ -58,7 +58,10 @@ export default {
         },
         taskMemo: {
             type: Object,
-        }
+        },
+        formTitle: {
+            type: String,
+        },
     },
 
     data() {

@@ -101,6 +101,9 @@ export default {
 
         };
     },
+    created() {
+        this.currentTask = JSON.parse(JSON.stringify(this.task));
+    },
     emits: ['cancel', 'create', 'update'],
     props: {
         task: {
@@ -122,6 +125,7 @@ export default {
             if (this.isNew) {
                 this.$emit('create', this.currentTask);
             } else {
+                Object.assign(this.task, this.currentTask);
                 this.$emit('update', this.currentTask);
             }
         },

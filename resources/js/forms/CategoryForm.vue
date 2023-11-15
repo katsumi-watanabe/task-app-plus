@@ -71,11 +71,15 @@ export default {
             },
         }
     },
+    created() {
+        this.currentCategory = JSON.parse(JSON.stringify(this.category));
+    },
     methods: {
         confirmCategory() {
             if (this.isNew) {
                 this.$emit('create', this.currentCategory);
             } else {
+                Object.assign(this.category, this.currentCategory);
                 this.$emit('update', this.currentCategory);
             }
         }

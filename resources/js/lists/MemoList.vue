@@ -10,7 +10,7 @@
             新規作成
         </v-btn>
     </div>
-    <v-table fixed-header height="400px">
+    <v-table fixed-header height="auto">
         <thead flex>
             <tr>
                 <th class="text-left">
@@ -57,7 +57,7 @@
         max-width="500px"
     >
         <TaskMemoForm
-            @cancel="confirmCancelTaskMemo"
+            @cancel="this.taskMemoListChildDlg = false"
             :isNew="isNewTaskMemo"
             :taskMemo="selectedTaskMemo"
             :task="task"
@@ -135,10 +135,6 @@ export default {
             }).catch(error => {
                 console.error('Error creating new task-memo:', error);
             })
-        },
-        confirmCancelTaskMemo() {
-            this.fetchTaskMemos();
-            this.taskMemoListChildDlg = false;
         },
 
         confirmDelete(task_id, memo_id) {

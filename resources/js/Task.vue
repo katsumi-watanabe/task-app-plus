@@ -93,7 +93,7 @@
                         </v-col>
                     </v-row>
                 </div>
-                <v-table fixed-header height="450px">
+                <v-table fixed-header height="auto">
                     <thead>
                         <tr>
                             <th class="text-left">ステータス</th>
@@ -170,7 +170,7 @@
                         :task="selectedTask"
                         :categories="categories"
                         :formTitle="formTitle"
-                        @cancel="confirmCancel"
+                        @cancel="this.taskFormDialog = false"
                         @create="confirmNewTask"
                         @update="confirmUpdateTask"
                     ></TaskForm>
@@ -180,9 +180,6 @@
             </v-container>
         </v-main>
 
-        <v-bottom-navigation>
-            Button Navigation
-        </v-bottom-navigation>
 
         <v-footer color="indigo" app>
             Footer
@@ -296,11 +293,6 @@ export default {
                 console.error('Error updating task:', error);
             })
         },
-        // コピーしたものを編集する→OKで反映
-        confirmCancel() {
-            this.fetchTasks();
-            this.taskFormDialog = false;
-        },
 
         confirmDelete(task) {
             axios.delete(`/api/v1/tasks/${task.id}`).then(() => {
@@ -315,7 +307,6 @@ export default {
             this.displaySearchBox = !this.displaySearchBox;
         },
 
-        // まとめれる！！！
         reset() {
             this.selectedStatus = [];
             this.keyword_search = "";

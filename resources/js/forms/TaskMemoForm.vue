@@ -74,11 +74,15 @@ export default {
             },
         }
     },
+    created() {
+        this.currentTaskMemo = JSON.parse(JSON.stringify(this.taskMemo));
+    },
     methods: {
         confirmTaskMemo() {
             if (this.isNew) {
                 this.$emit('create', this.task.id, this.currentTaskMemo);
             } else {
+                Object.assign(this.taskMemo, this.currentTaskMemo);
                 this.$emit('update', this.task.id, this.currentTaskMemo);
             }
         }

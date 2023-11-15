@@ -38,7 +38,7 @@
                     新規登録
                 </v-btn>
 
-                <v-table height="200px" class="mt-3">
+                <v-table fixed-header height="auto" class="mt-3">
                     <thead>
                         <tr>
                             <th class="text-left">カテゴリ名</th>
@@ -79,7 +79,7 @@
         >
 
         <CategoryForm
-            @cancel="confirmCancel"
+            @cancel="this.categoryListChildDialog = false"
             :isNew="isNewCategory"
             :category="selectedCategory"
             :formTitle="formTitle"
@@ -167,11 +167,6 @@ export default {
             }).catch(error => {
                 console.error('Error updating category:', error);
             })
-        },
-
-        confirmCancel() {
-            this.fetchCategories();
-            this.categoryListChildDialog = false;
         },
     }
 }

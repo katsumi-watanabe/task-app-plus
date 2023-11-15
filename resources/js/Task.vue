@@ -203,6 +203,7 @@ import TaskForm from './forms/TaskForm.vue';
 import CategoryList from './lists/CategoryList.vue';
 import { dateFormat } from './dateFormat.js';
 
+
 export default {
     components: {
         DeleteButton,

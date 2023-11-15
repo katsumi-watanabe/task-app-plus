@@ -1,5 +1,6 @@
 import './bootstrap';
 import { createApp } from 'vue';
+import PreventDoubleClickDirective from './directives/prevent-double-click.js';
 
 import Task from './Task.vue';
 
@@ -25,6 +26,9 @@ const vuetify = createVuetify({
     },
   }
 });
+// Vueアプリケーションインスタンスの作成
+const app = createApp(Task);
 
-// use(vuetify)の追加
-createApp(Task).use(vuetify).mount('#app');
+app.directive('prevent-double-click', PreventDoubleClickDirective);
+app.use(vuetify);
+app.mount('#app');

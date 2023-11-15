@@ -39,6 +39,7 @@
         <v-btn
             class="bg-light-blue"
             variant="text"
+            v-prevent-double-click
             @click="confirmTaskMemo"
         >
         OK

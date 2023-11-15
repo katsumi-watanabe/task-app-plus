@@ -29,6 +29,7 @@
             </v-btn>
             <v-btn
                 class="bg-light-blue"
+                v-prevent-double-click
                 @click="confirmDelete()"
             >
                 OK

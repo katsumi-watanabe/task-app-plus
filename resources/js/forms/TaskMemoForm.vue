@@ -60,7 +60,7 @@ export default {
         }
     },
     created() {
-        this.currentTaskMemo = JSON.parse(JSON.stringify(this.taskMemo));
+        this.currentTaskMemo = _.clone(this.taskMemo);
     },
     methods: {
         confirmTaskMemo() {

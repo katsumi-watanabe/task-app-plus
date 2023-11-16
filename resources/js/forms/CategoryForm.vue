@@ -64,7 +64,7 @@ export default {
         }
     },
     created() {
-        this.currentCategory = JSON.parse(JSON.stringify(this.category));
+        this.currentCategory = _.clone(this.category);
     },
     methods: {
         confirmCategory() {

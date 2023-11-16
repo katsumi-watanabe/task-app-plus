@@ -93,7 +93,7 @@ export default {
         };
     },
     created() {
-        this.currentTask = JSON.parse(JSON.stringify(this.task));
+        this.currentTask =_.clone(this.task);
     },
     emits: ['cancel', 'create', 'update'],
     props: {

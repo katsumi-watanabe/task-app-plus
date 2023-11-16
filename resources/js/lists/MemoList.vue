@@ -108,6 +108,7 @@ export default {
         },
         confirmUpdateTaskMemo(task_id, memo) {
             axios.put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo).then(() => {
+                this.fetchTaskMemos();
                 this.taskMemoListChildDlg = false;
             }).catch((error) => {
                 console.error("Error creating new task-memo:", error);

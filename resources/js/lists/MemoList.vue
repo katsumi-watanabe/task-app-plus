@@ -39,7 +39,6 @@
             :isNew="isNewTaskMemo"
             :taskMemo="selectedTaskMemo"
             :task="task"
-            :formTitle="formTitle"
             @cancel="this.taskMemoListChildDlg = false"
             @create="confirmNewTaskMemo"
             @update="confirmUpdateTaskMemo"
@@ -62,7 +61,6 @@ export default {
             memos: [],
             taskMemoListChildDlg: false,
             isNewTaskMemo: false,
-            formTitle: "",
             selectedTaskMemo: {},
             // 多重送信防止フラグ
             isDisabled: false,
@@ -80,67 +78,51 @@ export default {
         dateFormat,
 
         fetchTaskMemos() {
-            axios
-                .get(`/api/v1/tasks/${this.task.id}/memos`)
-                .then((res) => {
-                    this.memos = res.data.memos;
-                })
-                .catch((error) => {
-                    console.error("Error fetching memos:", error);
-                });
+            axios.get(`/api/v1/tasks/${this.task.id}/memos`).then((res) => {
+                this.memos = res.data.memos;
+            }).catch((error) => {
+                console.error("Error fetching memos:", error);
+            });
         },
         createTaskMemo() {
             this.selectedTaskMemo = { content: "" };
-            this.formTitle = "タスクメモ新規登録画面";
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = true;
         },
         updateTaskMemo(memo) {
             this.selectedTaskMemo = memo;
-            this.formTitle = "タスクメモ編集画面";
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = false;
         },
 
         confirmNewTaskMemo(task_id, memo) {
             this.isDisabled = true;
-            axios
-                .post(`/api/v1/tasks/${task_id}/memos`, memo)
-                .then(() => {
-                    this.fetchTaskMemos();
-                    this.taskMemoListChildDlg = false;
-                })
-                .catch((error) => {
-                    console.error("Error creating new task-memo:", error);
-                })
-                .finally(() => {
-                    this.isDisabled = false;
-                });
+            axios.post(`/api/v1/tasks/${task_id}/memos`, memo).then(() => {
+                this.fetchTaskMemos();
+                this.taskMemoListChildDlg = false;
+            }).catch((error) => {
+                console.error("Error creating new task-memo:", error);
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
         confirmUpdateTaskMemo(task_id, memo) {
-            axios
-                .put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo)
-                .then(() => {
-                    this.taskMemoListChildDlg = false;
-                })
-                .catch((error) => {
-                    console.error("Error creating new task-memo:", error);
-                });
+            axios.put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo).then(() => {
+                this.taskMemoListChildDlg = false;
+            }).catch((error) => {
+                console.error("Error creating new task-memo:", error);
+            });
         },
 
         confirmDelete(task_id, memo_id) {
             this.isDisabled = true;
-            axios
-                .delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`)
-                .then(() => {
-                    this.fetchTaskMemos();
-                })
-                .catch((error) => {
-                    console.error("Error updating task-memo:", error);
-                })
-                .finally(() => {
-                    this.isDisabled = false;
-                });
+            axios.delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`).then(() => {
+                this.fetchTaskMemos();
+            }).catch((error) => {
+                console.error("Error updating task-memo:", error);
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
     },
 };

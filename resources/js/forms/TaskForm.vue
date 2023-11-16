@@ -1,7 +1,7 @@
 <template>
     <v-card width="90vh" height="90vh" style="overflow: scroll;">
         <v-card-title>
-            <span class="text-h5">{{ formTitle }}</span>
+            <span class="text-h5">{{ isNew == true ? 'タスク新規登録画面' : 'タスク編集画面' }}</span>
             <v-spacer></v-spacer>
             <v-menu
                 bottom
@@ -107,9 +107,6 @@ export default {
         },
         task: {
             type: Object,
-        },
-        formTitle: {
-            type: String,
         },
         categories: {
             type: Array,

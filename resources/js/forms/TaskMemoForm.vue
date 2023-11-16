@@ -1,13 +1,8 @@
 <template>
     <v-card>
         <v-card-title>
-        <span>{{ formTitle }}</span>
+        <span>{{ isNew == true ? 'タスクメモ新規登録画面' : 'タスクメモ編集画面'}}</span>
         <v-spacer></v-spacer>
-        <!-- <v-menu
-            bottom
-            left
-        >
-        </v-menu> -->
         </v-card-title>
         <v-card-text>
         <v-container>
@@ -55,9 +50,6 @@ export default {
         },
         taskMemo: {
             type: Object,
-        },
-        formTitle: {
-            type: String,
         },
     },
 

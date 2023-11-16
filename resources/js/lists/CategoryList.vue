@@ -81,7 +81,6 @@
         <CategoryForm
             :isNew="isNewCategory"
             :category="selectedCategory"
-            :formTitle="formTitle"
             @cancel="this.categoryListChildDialog = false"
             @create="confirmNewCategory"
             @update="confirmUpdateCategory"
@@ -106,7 +105,6 @@ export default {
             categoryListParentDialog: false,
             categoryListChildDialog: false,
             isNewCategory: true,
-            formTitle: '',
             selectedCategory: '',
             categoryList: {},
             // 多重送信防止フラグ
@@ -132,14 +130,12 @@ export default {
 
         createCategory() {
             this.selectedCategory = { name: '' };
-            this.formTitle = 'カテゴリ新規登録画面';
             this.isNewCategory = true;
             this.categoryListChildDialog = true;
         },
 
         updateCategory(category) {
             this.selectedCategory = category;
-            this.formTitle = 'カテゴリ編集画面';
             this.isNewCategory = false;
             this.categoryListChildDialog = true;
         },

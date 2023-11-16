@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-        <span>{{ formTitle }}</span>
+        <span>{{ isNew ? 'カテゴリ新規登録画面' : 'カテゴリ編集画面'}}</span>
         <v-spacer></v-spacer>
         <v-menu
             bottom
@@ -56,9 +56,6 @@ export default {
         },
         category: {
             type: Object,
-        },
-        formTitle: {
-            type: String,
         },
     },
 

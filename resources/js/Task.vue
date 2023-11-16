@@ -169,7 +169,6 @@
                         :isNew="isNewTask"
                         :task="selectedTask"
                         :categories="categories"
-                        :formTitle="formTitle"
                         @cancel="this.taskFormDialog = false"
                         @create="confirmNewTask"
                         @update="confirmUpdateTask"
@@ -218,7 +217,6 @@ export default {
             length:0,
 
             taskFormDialog: false,
-            formTitle: '',
             isNewTask: true,
             selectedTask: '',
 
@@ -266,14 +264,12 @@ export default {
 
         createTask() {
             this.selectedTask = { title: '', description: '', due_date: '', category_id: '' };
-            this.formTitle = 'タスク新規登録画面';
             this.isNewTask = true;
             this.taskFormDialog = true;
         },
 
         updateTask(task) {
             this.selectedTask = task;
-            this.formTitle = 'タスク編集画面';
             this.isNewTask = false;
             this.taskFormDialog = true;
         },

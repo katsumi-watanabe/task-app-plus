@@ -45,9 +45,6 @@ export default {
         isNew: {
             type: Boolean,
         },
-        task: {
-            type: Object,
-        },
         taskMemo: {
             type: Object,
         },
@@ -68,9 +65,9 @@ export default {
     methods: {
         confirmTaskMemo() {
             if (this.isNew) {
-                this.$emit('create', this.task.id, this.currentTaskMemo);
+                this.$emit('create', this.currentTaskMemo);
             } else {
-                this.$emit('update', this.task.id, this.currentTaskMemo);
+                this.$emit('update', this.currentTaskMemo);
             }
         }
     }

@@ -42,8 +42,8 @@
 export default {
     emits: ['delete'],
     props: {
-        category: {
-            type: Object,
+        category_id: {
+            type: Number,
         }
     },
     data() {
@@ -54,7 +54,7 @@ export default {
 
     methods: {
         confirmDelete() {
-            this.$emit('delete', this.category);
+            this.$emit('delete', this.category_id);
       },
     },
 };

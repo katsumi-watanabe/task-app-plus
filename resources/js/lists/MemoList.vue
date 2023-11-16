@@ -27,7 +27,7 @@
                     </v-btn>
                 </td>
                 <td>
-                    <TaskMemoDeleteButton @delete="confirmDelete" :memo="memo">
+                    <TaskMemoDeleteButton @delete="confirmDelete" :memo_id="memo.id">
                     </TaskMemoDeleteButton>
                 </td>
             </tr>
@@ -38,7 +38,6 @@
         <TaskMemoForm
             :isNew="isNewTaskMemo"
             :taskMemo="selectedTaskMemo"
-            :task="task"
             @cancel="this.taskMemoListChildDlg = false"
             @create="confirmNewTaskMemo"
             @update="confirmUpdateTaskMemo"
@@ -95,9 +94,9 @@ export default {
             this.isNewTaskMemo = false;
         },
 
-        confirmNewTaskMemo(task_id, memo) {
+        confirmNewTaskMemo(memo) {
             this.isDisabled = true;
-            axios.post(`/api/v1/tasks/${task_id}/memos`, memo).then(() => {
+            axios.post(`/api/v1/tasks/${this.task.id}/memos`, memo).then(() => {
                 this.fetchTaskMemos();
                 this.taskMemoListChildDlg = false;
             }).catch((error) => {
@@ -106,8 +105,8 @@ export default {
                 this.isDisabled = false;
             });
         },
-        confirmUpdateTaskMemo(task_id, memo) {
-            axios.put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo).then(() => {
+        confirmUpdateTaskMemo(memo) {
+            axios.put(`/api/v1/tasks/${this.task.id}/memos/${memo.id}`, memo).then(() => {
                 this.fetchTaskMemos();
                 this.taskMemoListChildDlg = false;
             }).catch((error) => {
@@ -115,9 +114,9 @@ export default {
             });
         },
 
-        confirmDelete(task_id, memo_id) {
+        confirmDelete(memo_id) {
             this.isDisabled = true;
-            axios.delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`).then(() => {
+            axios.delete(`/api/v1/tasks/${this.task.id}/memos/${memo_id}`).then(() => {
                 this.fetchTaskMemos();
             }).catch((error) => {
                 console.error("Error updating task-memo:", error);

@@ -49,14 +49,14 @@ export default {
     },
     emits: ['delete'],
     props: {
-        task: {
-            type: Object,
+        task_id: {
+            type: Number,
         }
     },
 
     methods: {
         confirmDelete() {
-            this.$emit('delete', this.task);
+            this.$emit('delete', this.task_id);
         },
   },
 };

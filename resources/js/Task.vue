@@ -142,7 +142,7 @@
                             <!-- 1回以上削除がクリックできてしまう→一回しか押せないような処理設定が必要？ -->
                             <td>
                                 <DeleteButton
-                                    :task="task"
+                                    :task_id="task.id"
                                     @delete="confirmDelete"
                                 ></DeleteButton>
                             </td>
@@ -295,9 +295,9 @@ export default {
             });
         },
 
-        confirmDelete(task) {
+        confirmDelete(task_id) {
             this.isDisabled = true;
-            axios.delete(`/api/v1/tasks/${task.id}`).then(() => {
+            axios.delete(`/api/v1/tasks/${task_id}`).then(() => {
                 this.fetchTasks();
             }).catch(error => {
                 console.error('Error updating task:', error);

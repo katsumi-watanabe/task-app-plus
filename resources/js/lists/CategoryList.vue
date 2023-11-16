@@ -61,7 +61,7 @@
                             </td>
                             <td class="text-left">
                                 <CategoryDeleteButton
-                                    :category="category"
+                                    :category_id="category.id"
                                     @delete="confirmDeleteCategory"
                                 ></CategoryDeleteButton>
                             </td>
@@ -161,9 +161,9 @@ export default {
             });
         },
 
-        confirmDeleteCategory(category) {
+        confirmDeleteCategory(category_id) {
             this.isDisabled = true;
-            axios.delete(`/api/v1/categories/${category.id}`).then(() => {
+            axios.delete(`/api/v1/categories/${category_id}`).then(() => {
                 this.fetchCategories();
             }).catch(error => {
                 console.error('Error updating category:', error);

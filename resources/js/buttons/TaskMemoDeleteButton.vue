@@ -42,8 +42,8 @@
 export default {
     emits: ['delete'],
     props: {
-        memo: {
-            type: Object,
+        memo_id: {
+            type: Number,
         }
     },
     data() {
@@ -54,7 +54,7 @@ export default {
 
     methods: {
         confirmDelete() {
-            this.$emit('delete', this.memo.task_id, this.memo.id);
+            this.$emit('delete', this.memo_id);
       },
     },
 };

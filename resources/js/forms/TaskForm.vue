@@ -3,11 +3,6 @@
         <v-card-title>
             <span class="text-h5">{{ isNew == true ? 'タスク新規登録画面' : 'タスク編集画面' }}</span>
             <v-spacer></v-spacer>
-            <v-menu
-                bottom
-                left
-            >
-            </v-menu>
         </v-card-title>
         <v-card-text>
             <v-container>

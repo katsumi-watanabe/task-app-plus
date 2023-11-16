@@ -228,6 +228,8 @@ export default {
             selectedCategory: [],
             statusItems: ['完了', '未完了'],
             displaySearchBox: false,
+            // 多重送信防止フラグ
+            isDisabled: false,
         };
     },
     mounted() {
@@ -277,12 +279,15 @@ export default {
         },
 
         confirmNewTask(task) {
+            this.isDisabled = true;
             axios.post('/api/v1/tasks', task).then(() => {
                 this.fetchTasks();
                 this.taskFormDialog = false;
             }).catch(error => {
                 console.error('Error creating new task:', error);
-            })
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
 
         confirmUpdateTask(task) {
@@ -291,15 +296,18 @@ export default {
                 this.taskFormDialog = false;
             }).catch(error => {
                 console.error('Error updating task:', error);
-            })
+            });
         },
 
         confirmDelete(task) {
+            this.isDisabled = true;
             axios.delete(`/api/v1/tasks/${task.id}`).then(() => {
                 this.fetchTasks();
             }).catch(error => {
                 console.error('Error updating task:', error);
-            })
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
 
         // 検索ボックス表示切替
@@ -318,12 +326,12 @@ export default {
         complete(id) {
             axios.put(`/api/v1/tasks/${id}/complete`).then(res => {
                 this.fetchTasks();
-            })
+            });
         },
         cancel(id) {
             axios.put(`/api/v1/tasks/${id}/cancel`).then(res => {
                 this.fetchTasks();
-            })
+            });
         },
 
         // ページネーション

@@ -1,37 +1,21 @@
 <template>
     <div class="text-right mb-3">
-        <v-btn
-            class="bg-success white"
-            @click="createTaskMemo"
-        >
-            <v-icon>
-                mdi-plus-circle-outline
-            </v-icon>
+        <v-btn class="bg-success white" @click="createTaskMemo">
+            <v-icon> mdi-plus-circle-outline </v-icon>
             新規作成
         </v-btn>
     </div>
     <v-table fixed-header height="auto">
         <thead flex>
             <tr>
-                <th class="text-left">
-                    日付
-                </th>
-                <th class="text-left">
-                    内容
-                </th>
-                <th class="text-left">
-                    編集
-                </th>
-                <th class="text-left">
-                    削除
-                </th>
+                <th class="text-left">日付</th>
+                <th class="text-left">内容</th>
+                <th class="text-left">編集</th>
+                <th class="text-left">削除</th>
             </tr>
         </thead>
         <tbody>
-            <tr
-                v-for="memo in memos"
-                :key="memo.id"
-            >
+            <tr v-for="memo in memos" :key="memo.id">
                 <td>{{ dateFormat(memo.created_at) }}</td>
                 <td>{{ memo.content }}</td>
                 <td>
@@ -40,40 +24,33 @@
                         @click="updateTaskMemo(memo)"
                     >
                         <v-icon>mdi-table-edit</v-icon>
-                    </v-btn></td>
+                    </v-btn>
+                </td>
                 <td>
-                    <TaskMemoDeleteButton
-                        @delete="confirmDelete"
-                        :memo="memo"
-                    >
+                    <TaskMemoDeleteButton @delete="confirmDelete" :memo="memo">
                     </TaskMemoDeleteButton>
                 </td>
             </tr>
         </tbody>
     </v-table>
 
-    <v-dialog
-        v-model="taskMemoListChildDlg"
-        max-width="500px"
-    >
+    <v-dialog v-model="taskMemoListChildDlg" max-width="500px">
         <TaskMemoForm
-            @cancel="this.taskMemoListChildDlg = false"
             :isNew="isNewTaskMemo"
             :taskMemo="selectedTaskMemo"
             :task="task"
             :formTitle="formTitle"
+            @cancel="this.taskMemoListChildDlg = false"
             @create="confirmNewTaskMemo"
             @update="confirmUpdateTaskMemo"
         >
         </TaskMemoForm>
-
     </v-dialog>
-
 </template>
 <script>
-import TaskMemoForm from '../forms/TaskMemoForm.vue'
-import TaskMemoDeleteButton from '../buttons/TaskMemoDeleteButton.vue'
-import { dateFormat } from '../dateFormat'
+import TaskMemoForm from "../forms/TaskMemoForm.vue";
+import TaskMemoDeleteButton from "../buttons/TaskMemoDeleteButton.vue";
+import { dateFormat } from "../dateFormat";
 
 export default {
     components: {
@@ -82,12 +59,13 @@ export default {
     },
     data() {
         return {
-            memos: '',
-            content: '',
+            memos: [],
             taskMemoListChildDlg: false,
             isNewTaskMemo: false,
-            formTitle: '',
-            selectedTaskMemo: '',
+            formTitle: "",
+            selectedTaskMemo: {},
+            // 多重送信防止フラグ
+            isDisabled: false,
         };
     },
     props: {
@@ -102,48 +80,68 @@ export default {
         dateFormat,
 
         fetchTaskMemos() {
-            axios.get(`/api/v1/tasks/${this.task.id}/memos`).then(res => {
-                this.memos = res.data.memos;
-            }).catch(error => {
-                console.error('Error fetching memos:', error);
-            });
+            axios
+                .get(`/api/v1/tasks/${this.task.id}/memos`)
+                .then((res) => {
+                    this.memos = res.data.memos;
+                })
+                .catch((error) => {
+                    console.error("Error fetching memos:", error);
+                });
         },
         createTaskMemo() {
-            this.selectedTaskMemo = { content: '' };
-            this.formTitle = 'タスクメモ新規登録画面';
+            this.selectedTaskMemo = { content: "" };
+            this.formTitle = "タスクメモ新規登録画面";
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = true;
         },
         updateTaskMemo(memo) {
             this.selectedTaskMemo = memo;
-            this.formTitle = 'タスクメモ編集画面';
+            this.formTitle = "タスクメモ編集画面";
             this.taskMemoListChildDlg = true;
             this.isNewTaskMemo = false;
         },
 
         confirmNewTaskMemo(task_id, memo) {
-            axios.post(`/api/v1/tasks/${task_id}/memos`, memo).then(() => {
-                this.fetchTaskMemos();
-                this.taskMemoListChildDlg = false;
-            }).catch(error => {
-                console.error('Error creating new task-memo:', error);
-            })
+            this.isDisabled = true;
+            axios
+                .post(`/api/v1/tasks/${task_id}/memos`, memo)
+                .then(() => {
+                    this.fetchTaskMemos();
+                    this.taskMemoListChildDlg = false;
+                })
+                .catch((error) => {
+                    console.error("Error creating new task-memo:", error);
+                })
+                .finally(() => {
+                    this.isDisabled = false;
+                });
         },
         confirmUpdateTaskMemo(task_id, memo) {
-            axios.put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo).then(() => {
-                this.taskMemoListChildDlg = false;
-            }).catch(error => {
-                console.error('Error creating new task-memo:', error);
-            })
+            axios
+                .put(`/api/v1/tasks/${task_id}/memos/${memo.id}`, memo)
+                .then(() => {
+                    this.taskMemoListChildDlg = false;
+                })
+                .catch((error) => {
+                    console.error("Error creating new task-memo:", error);
+                });
         },
 
         confirmDelete(task_id, memo_id) {
-            axios.delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`).then(() => {
-                this.fetchTaskMemos();
-            }).catch(error => {
-                console.error('Error updating task-memo:', error);
-            })
+            this.isDisabled = true;
+            axios
+                .delete(`/api/v1/tasks/${task_id}/memos/${memo_id}`)
+                .then(() => {
+                    this.fetchTaskMemos();
+                })
+                .catch((error) => {
+                    console.error("Error updating task-memo:", error);
+                })
+                .finally(() => {
+                    this.isDisabled = false;
+                });
         },
-    }
-}
-  </script>
+    },
+};
+</script>

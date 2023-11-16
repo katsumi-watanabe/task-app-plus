@@ -1,3 +1,4 @@
+<!-- DeleteButton -->
 <template>
     <v-row>
         <v-dialog
@@ -30,7 +31,7 @@
             <v-btn
                 class="bg-light-blue"
                 v-prevent-double-click
-                @click="confirmDelete()"
+                @click="confirmDelete"
             >
                 OK
             </v-btn>

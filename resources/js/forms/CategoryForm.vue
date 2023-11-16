@@ -51,21 +51,21 @@
 export default {
     emits: ['cancel', 'create', 'update'],
     props: {
+        isNew: {
+            type: Boolean,
+        },
         category: {
             type: Object,
         },
         formTitle: {
             type: String,
         },
-        isNew: {
-            type: Boolean,
-        },
     },
 
     data() {
         return {
-            currentCategory: this.category,
             name: '',
+            currentCategory: {},
             rules: {
                 required: value => !!value || 'Field is required',
             },

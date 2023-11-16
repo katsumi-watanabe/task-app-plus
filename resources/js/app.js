@@ -28,7 +28,6 @@ const vuetify = createVuetify({
 });
 // Vueアプリケーションインスタンスの作成
 const app = createApp(Task);
-
 app.directive('prevent-double-click', PreventDoubleClickDirective);
 app.use(vuetify);
 app.mount('#app');

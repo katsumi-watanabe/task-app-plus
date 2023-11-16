@@ -25,7 +25,7 @@
                     class="bg-grey white mb-3 mr-3"
                     @click="categoryListParentDialog = false"
                 >
-                    タスク一覧
+                    閉じる
                 </v-btn>
                 <v-btn
                     class="bg-success white mb-3"
@@ -79,10 +79,10 @@
         >
 
         <CategoryForm
-            @cancel="this.categoryListChildDialog = false"
             :isNew="isNewCategory"
             :category="selectedCategory"
             :formTitle="formTitle"
+            @cancel="this.categoryListChildDialog = false"
             @create="confirmNewCategory"
             @update="confirmUpdateCategory"
         >
@@ -103,13 +103,14 @@ export default {
     },
     data () {
         return {
-            name: '',
             categoryListParentDialog: false,
             categoryListChildDialog: false,
             isNewCategory: true,
             formTitle: '',
             selectedCategory: '',
-            categoryList: [],
+            categoryList: {},
+            // 多重送信防止フラグ
+            isDisabled: false,
         }
     },
     props: {
@@ -144,12 +145,15 @@ export default {
         },
 
         confirmNewCategory(category) {
+            this.isDisabled = true;
             axios.post('/api/v1/categories', category).then(() => {
                 this.fetchCategories();
                 this.categoryListChildDialog = false;
             }).catch(error => {
                 console.error('Error creating new category:', error);
-            })
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
 
         confirmUpdateCategory(category) {
@@ -158,15 +162,18 @@ export default {
                 this.categoryListChildDialog = false;
             }).catch(error => {
                 console.error('Error updating category:', error);
-            })
+            });
         },
 
         confirmDeleteCategory(category) {
+            this.isDisabled = true;
             axios.delete(`/api/v1/categories/${category.id}`).then(() => {
                 this.fetchCategories();
             }).catch(error => {
                 console.error('Error updating category:', error);
-            })
+            }).finally(() => {
+                this.isDisabled = false;
+            });
         },
     }
 }

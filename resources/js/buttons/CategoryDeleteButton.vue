@@ -6,8 +6,8 @@
         >
         <template v-slot:activator="{ props }">
             <v-btn
-            color="red"
-            v-bind="props"
+                color="red"
+                v-bind="props"
             >
             <v-icon>mdi-delete</v-icon>
 
@@ -29,7 +29,7 @@
             <v-btn
                 class="bg-light-blue"
                 v-prevent-double-click
-                @click="confirmDelete()"
+                @click="confirmDelete"
             >
                 OK
             </v-btn>
@@ -44,7 +44,6 @@ export default {
     props: {
         category: {
             type: Object,
-            required: true
         }
     },
     data() {

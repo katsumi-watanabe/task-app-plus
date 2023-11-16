@@ -3,28 +3,24 @@
         <v-card-title>
         <span>{{ formTitle }}</span>
         <v-spacer></v-spacer>
-        <v-menu
+        <!-- <v-menu
             bottom
             left
         >
-        </v-menu>
+        </v-menu> -->
         </v-card-title>
         <v-card-text>
         <v-container>
-        <v-row>
-            <v-col
-            cols="12"
-            sm="12"
-            md="12"
-            >
-            <v-text-field
-                label="コンテンツ"
-                persistent-hint
-                :rules="[rules.required]"
-                v-model="currentTaskMemo.content"
-            ></v-text-field>
-            </v-col>
-        </v-row>
+            <v-row>
+                <v-col cols="12">
+                <v-text-field
+                    label="コンテンツ"
+                    persistent-hint
+                    :rules="[rules.required]"
+                    v-model="currentTaskMemo.content"
+                ></v-text-field>
+                </v-col>
+            </v-row>
         </v-container>
     </v-card-text>
     <v-card-actions>
@@ -67,7 +63,7 @@ export default {
 
     data() {
         return {
-            currentTaskMemo: this.taskMemo,
+            currentTaskMemo: {},
             content: '',
             rules: {
                 required: value => !!value || 'Field is required',

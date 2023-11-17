@@ -67,10 +67,16 @@ class TaskController extends Controller
     */
     public function completeTask($id)
     {
-        DB::transaction(function () use ($id) {
+        try {
             $task = Task::findOrFail($id);
-            $task->complete();
-        });
+            DB::transaction(function () use ($task) {
+                $task->complete();
+            });
+
+            return  compact('task');
+        } catch (\Throwable $th) {
+            return  response()->json(['message' => 'An error occurred']);
+        }
     }
 
     public function cancelTask($id)

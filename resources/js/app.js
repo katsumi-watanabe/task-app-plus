@@ -9,6 +9,7 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+
 import _ from 'lodash'
 
 // jsにアイコンフォント(mdi)を埋め込む場合に必要

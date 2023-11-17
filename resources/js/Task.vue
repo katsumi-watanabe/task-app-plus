@@ -19,7 +19,6 @@
         </v-btn>
       </template>
     </v-app-bar>
-
     <v-main class="bg-indigo-lighten-5">
       <v-container>
         <div v-if="displaySearchBox == true">
@@ -71,7 +70,8 @@
             </v-col>
           </v-row>
         </div>
-        <v-table fixed-header height="auto">
+
+        <v-table fixed-header height="auto" style="position: relative">
           <thead>
             <tr>
               <th class="text-left">ステータス</th>
@@ -88,15 +88,16 @@
           <tbody>
             <tr v-for="task in tasks" :key="task.id" :class="{ 'bg-lightgray': task.completed_at }">
               <td>
-                <!-- ここ確認 -->
-                <v-checkbox v-if="!task.completed_at" @click="complete(task.id)" hide-details></v-checkbox>
-                <v-checkbox
-                  v-else
-                  :model-value="true"
-                  class="success"
-                  @click="cancel(task.id)"
+                <!-- booleanではなく日付で判定しているからチェックが入らない -->
+                <!-- イベントのハンドリングは必要 チェックがついているかどうか判断できない？ -->
+                <v-checkbox :modelValue="!!task.completed_at" @update:modelValue="statusChange(task)" hide-details>
+                </v-checkbox>
+                <!-- <v-checkbox
+                  :modelValue="!!task.completed_at"
+                  @click="task.completed_at ? cancel(task.id) : complete(task.id)"
                   hide-details
-                ></v-checkbox>
+                >
+                </v-checkbox> -->
               </td>
               <td>{{ !!task.title ? task.title : '' }}</td>
               <td>{{ !!task.category ? task.category.name : '' }}</td>
@@ -109,13 +110,18 @@
                   <v-icon>mdi-table-edit</v-icon>
                 </v-btn>
               </td>
-              <!-- キャンセル不要？ -->
-              <!-- 1回以上削除がクリックできてしまう→一回しか押せないような処理設定が必要？ -->
               <td>
                 <DeleteButton :task_id="task.id" @delete="confirmDelete"></DeleteButton>
               </td>
             </tr>
           </tbody>
+          <div class="success_alert_message">
+            <v-alert v-model="alert" color="success" icon="$success" :text="taskMessage">
+              <div class="ml-3 px-3" role="button" @click="cancel(messageTaskId)">
+                <v-icon color="#fff"> mdi mdi-keyboard-return </v-icon>
+              </div>
+            </v-alert>
+          </div>
         </v-table>
         <div class="d-flex justify-end mt-2 mb-6">
           <v-pagination v-model="page" :length="length" @click="pageChange(page)"> </v-pagination>
@@ -144,6 +150,19 @@
 <style>
   .bg-lightgray {
     background-color: #c5cae9;
+  }
+  .success_alert_message {
+    width: '300px';
+    height: '75px';
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+  }
+  .success_alert_message div {
+    display: flex;
   }
 </style>
 
@@ -179,8 +198,16 @@
         selectedCategory: [],
         statusItems: ['完了', '未完了'],
         displaySearchBox: false,
+
         // 多重送信防止フラグ
         isDisabled: false,
+        // alert関連
+        alert: false,
+        alertTimer: null,
+        taskMessage: '',
+        messageTaskId: {},
+
+        isStatusChecked: false,
       };
     },
     mounted() {
@@ -188,6 +215,9 @@
       this.fetchTasks();
     },
     methods: {
+      statusChange(task) {
+        task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
+      },
       dateFormat,
       fetchTasks() {
         const selectedStatus = this.selectedStatus;
@@ -225,12 +255,14 @@
         this.selectedTask = { title: '', description: '', due_date: '', category_id: '' };
         this.isNewTask = true;
         this.taskFormDialog = true;
+        this.fetchCategories();
       },
 
       updateTask(task) {
         this.selectedTask = task;
         this.isNewTask = false;
         this.taskFormDialog = true;
+        this.fetchCategories();
       },
 
       confirmNewTask(task) {
@@ -292,12 +324,31 @@
       complete(id) {
         axios.put(`/api/v1/tasks/${id}/complete`).then(res => {
           this.fetchTasks();
+          this.alert = true;
+          if (res.data.task) {
+            this.taskMessage = res.data.task.title + '　完了';
+            this.messageTaskId = res.data.task.id;
+          } else {
+            this.taskMessage = res.data.message;
+          }
+          this.alertMessageTime();
         });
       },
       cancel(id) {
         axios.put(`/api/v1/tasks/${id}/cancel`).then(res => {
           this.fetchTasks();
+          this.alert = false;
         });
+      },
+
+      // アラートメッセージ表示時間設定
+      alertMessageTime() {
+        clearTimeout(this.alertTimer);
+
+        // 新しいタイマーを設定
+        this.alertTimer = setTimeout(() => {
+          this.alert = false;
+        }, 3000);
       },
 
       // ページネーション

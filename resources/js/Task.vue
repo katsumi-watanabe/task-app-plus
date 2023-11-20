@@ -116,7 +116,7 @@
           </div>
         </v-table>
         <div class="d-flex justify-end mt-2 mb-6">
-          <v-pagination v-model="page" :length="length" @click="pageChange(page)"> </v-pagination>
+            <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
         </div>
         <div>
           <v-row justify="center">
@@ -351,7 +351,6 @@
       },
 
       // 完了・未完了切り替え
-
       changeTaskCompletionState  (task) {
         task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
       },

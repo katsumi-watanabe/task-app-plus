@@ -88,16 +88,8 @@
           <tbody>
             <tr v-for="task in tasks" :key="task.id" :class="{ 'bg-lightgray': task.completed_at }">
               <td>
-                <!-- booleanではなく日付で判定しているからチェックが入らない -->
-                <!-- イベントのハンドリングは必要 チェックがついているかどうか判断できない？ -->
-                <v-checkbox :modelValue="!!task.completed_at" @update:modelValue="statusChange(task)" hide-details>
+                <v-checkbox :modelValue="!!task.completed_at" @update:modelValue="changeTaskCompletionState(task)" hide-details>
                 </v-checkbox>
-                <!-- <v-checkbox
-                  :modelValue="!!task.completed_at"
-                  @click="task.completed_at ? cancel(task.id) : complete(task.id)"
-                  hide-details
-                >
-                </v-checkbox> -->
               </td>
               <td>{{ !!task.title ? task.title : '' }}</td>
               <td>{{ !!task.category ? task.category.name : '' }}</td>
@@ -215,7 +207,7 @@
       this.fetchTasks();
     },
     methods: {
-      statusChange(task) {
+      changeTaskCompletionState  (task) {
         task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
       },
       dateFormat,

@@ -207,9 +207,6 @@
       this.fetchTasks();
     },
     methods: {
-      changeTaskCompletionState  (task) {
-        task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
-      },
       dateFormat,
       fetchTasks() {
         const selectedStatus = this.selectedStatus;
@@ -351,6 +348,12 @@
       pageChange(pageNumber) {
         this.page = pageNumber;
         this.fetchTasks();
+      },
+
+      // 完了・未完了切り替え
+
+      changeTaskCompletionState  (task) {
+        task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
       },
     },
   };

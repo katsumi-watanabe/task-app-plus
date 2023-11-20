@@ -1,7 +1,7 @@
 <template>
   <v-card width="90vh" height="90vh" style="overflow: scroll">
     <v-card-title>
-      <span class="text-h5">{{ isNew == true ? 'タスク新規登録画面' : 'タスク編集画面' }}</span>
+      <span class="text-h5">{{ getFormTitle }}</span>
       <v-spacer></v-spacer>
     </v-card-title>
     <v-card-text>
@@ -10,6 +10,8 @@
           <v-col cols="12">
             <v-text-field label="タイトル" :rules="[rules.required]" v-model="currentTask.title"></v-text-field>
           </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12">
             <v-select
               label="カテゴリ"
@@ -21,13 +23,18 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="6">
-            <v-text-field label="期日" type="date" v-model="currentTask.due_date"> </v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-textarea label="内容" v-model="currentTask.description"></v-textarea>
-          </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="6">
+                <v-text-field label="期日" type="date" v-model="currentTask.due_date"> </v-text-field>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-textarea label="内容" v-model="currentTask.description"></v-textarea>
+            </v-col>
+        </v-row>
+
         <v-card-text v-if="isNew == false">
           <div>
             <h3 class="text-center my-5" style="font-size: 2rem">タスクメモ一覧</h3>
@@ -82,7 +89,11 @@
         type: Array,
       },
     },
-
+    computed: {
+        getFormTitle() {
+            return this.isNew ? 'タスク新規登録画面' : 'タスク編集画面';
+        }
+    },
     methods: {
       confirmTask() {
         if (this.isNew) {

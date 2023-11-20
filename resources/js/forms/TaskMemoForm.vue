@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span>{{ isNew == true ? 'タスクメモ新規登録画面' : 'タスクメモ編集画面' }}</span>
+      <span>{{ getFormTitle }}</span>
       <v-spacer></v-spacer>
     </v-card-title>
     <v-card-text>
@@ -48,6 +48,11 @@
     },
     created() {
       this.currentTaskMemo = _.clone(this.taskMemo);
+    },
+    computed: {
+      getFormTitle() {
+        return this.isNew ? 'タスクメモ新規登録画面' : 'タスクメモ編集画面';
+      },
     },
     methods: {
       confirmTaskMemo() {

@@ -74,7 +74,7 @@
         categoryListChildDialog: false,
         isNewCategory: true,
         selectedCategory: '',
-        categoryList: {},
+        categoryList: [],
         // 多重送信防止フラグ
         isDisabled: false,
       };

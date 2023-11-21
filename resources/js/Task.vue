@@ -59,13 +59,14 @@
                 name="keyword_search"
                 v-model="keyword_search"
                 hide-details="auto"
+                @keyup.enter="fetchTasks"
               ></v-text-field>
             </v-col>
           </v-row>
 
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue"> 検索 </v-btn>
+              <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue" type="submit"> 検索 </v-btn>
               <v-btn prepend-icon="mdi-refresh" @click="reset"> リセット </v-btn>
             </v-col>
           </v-row>
@@ -85,9 +86,7 @@
               </th>
               <th class="text-left">内容</th>
               <th class="text-left th_hover" @click="sortble('due_date')">
-                期日<v-icon class="ml-1 mb-1" :class="getIconStyle('due_date')">{{
-                  getSortIcon('due_date')
-                }}</v-icon>
+                期日<v-icon class="ml-1 mb-1" :class="getIconStyle('due_date')">{{ getSortIcon('due_date') }}</v-icon>
               </th>
               <th class="text-left th_hover" @click="sortble('completed_at')">
                 完了日<v-icon class="ml-1 mb-1" :class="getIconStyle('completed_at')">{{
@@ -244,7 +243,6 @@
 
     methods: {
       dateFormat,
-
       // 並び替え
       sortble(columnName) {
         // ソート中のデータとソートしたいデータが同じ

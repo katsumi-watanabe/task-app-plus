@@ -224,9 +224,9 @@
         statusItems: ['完了', '未完了'],
         displaySearchBox: false,
 
-        sortColumnName: '',
+        // 並び替え関連
         sortColumnStatus: false,
-        sortColumnData: [],
+        sortColumnName: '',
 
         // 多重送信防止フラグ
         isDisabled: false,
@@ -235,8 +235,6 @@
         alertTimer: null,
         taskMessage: '',
         messageTaskId: {},
-
-        isStatusChecked: false,
       };
     },
     mounted() {

@@ -130,7 +130,7 @@
                 </v-btn>
               </td>
               <td>
-                <DeleteButton :task_id="task.id" @delete="confirmDelete"></DeleteButton>
+                <DeleteButton :id="task.id" @delete="confirmDelete"></DeleteButton>
               </td>
             </tr>
           </tbody>

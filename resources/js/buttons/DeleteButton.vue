@@ -8,7 +8,7 @@
       </template>
       <v-card>
         <v-card-title class="text-h5"> 本当に削除しますか？ </v-card-title>
-        <v-card-text>削除する場合は[OK]、削除しない場合は[CANCEL]をクリックしてください。</v-card-text>
+        <v-card-text>削除する場合は[OK]、 <br>削除しない場合は[CANCEL]をクリックしてください。</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="bg-grey-lighten-3" @click="deleteDialog = false"> CANCEL </v-btn>
@@ -27,14 +27,14 @@
     },
     emits: ['delete'],
     props: {
-      task_id: {
+      id: {
         type: Number,
       },
     },
 
     methods: {
       confirmDelete() {
-        this.$emit('delete', this.task_id);
+        this.$emit('delete', this.id);
       },
     },
   };

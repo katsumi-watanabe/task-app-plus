@@ -24,7 +24,7 @@
           </v-btn>
         </td>
         <td>
-          <TaskMemoDeleteButton @delete="confirmDelete" :memo_id="memo.id"> </TaskMemoDeleteButton>
+          <DeleteButton @delete="confirmDelete" :id="memo.id"> </DeleteButton>
         </td>
       </tr>
     </tbody>
@@ -43,13 +43,13 @@
 </template>
 <script>
   import TaskMemoForm from '../forms/TaskMemoForm.vue';
-  import TaskMemoDeleteButton from '../buttons/TaskMemoDeleteButton.vue';
+  import DeleteButton from '../buttons/DeleteButton.vue';
   import { dateFormat } from '../dateFormat';
 
   export default {
     components: {
       TaskMemoForm,
-      TaskMemoDeleteButton,
+      DeleteButton,
     },
     data() {
       return {

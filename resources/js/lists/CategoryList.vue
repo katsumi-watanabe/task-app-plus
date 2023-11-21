@@ -33,10 +33,10 @@
                     </v-btn>
                   </td>
                   <td class="text-left">
-                    <CategoryDeleteButton
-                      :category_id="category.id"
+                    <DeleteButton
+                      :id="category.id"
                       @delete="confirmDeleteCategory"
-                    ></CategoryDeleteButton>
+                    ></DeleteButton>
                   </td>
                 </tr>
               </tbody>
@@ -60,13 +60,13 @@
 </template>
 <script>
   import CategoryForm from '../forms/CategoryForm.vue';
-  import CategoryDeleteButton from '../buttons/CategoryDeleteButton.vue';
+  import DeleteButton from '../buttons/DeleteButton.vue';
   import axios from 'axios';
 
   export default {
     components: {
       CategoryForm,
-      CategoryDeleteButton,
+      DeleteButton,
     },
     data() {
       return {

@@ -74,13 +74,31 @@
         <v-table fixed-header height="auto" style="position: relative">
           <thead>
             <tr>
-              <th class="text-left">ステータス</th>
-              <th class="text-left">タイトル</th>
-              <th class="text-left">カテゴリ</th>
+              <th class="text-left th_hover">ステータス<v-icon class="ml-1 mb-1"></v-icon></th>
+              <th class="text-left th_hover" @click="sortble('title')">
+                タイトル<v-icon class="ml-1 mb-1" :class="getIconStyle('title')">{{ getSortIcon('title') }}</v-icon>
+              </th>
+              <th class="text-left th_hover" @click="sortble('category_id')">
+                カテゴリ<v-icon class="ml-1 mb-1" :class="getIconStyle('category_id')">{{
+                  getSortIcon('category_id')
+                }}</v-icon>
+              </th>
               <th class="text-left">内容</th>
-              <th class="text-left">期日</th>
-              <th class="text-left">完了日</th>
-              <th class="text-left">メモ件数</th>
+              <th class="text-left th_hover" @click="sortble('due_date')">
+                期日<v-icon class="ml-1 mb-1" :class="getIconStyle('due_date')">{{
+                  getSortIcon('due_date')
+                }}</v-icon>
+              </th>
+              <th class="text-left th_hover" @click="sortble('completed_at')">
+                完了日<v-icon class="ml-1 mb-1" :class="getIconStyle('completed_at')">{{
+                  getSortIcon('completed_at')
+                }}</v-icon>
+              </th>
+              <th class="text-left th_hover" @click="sortble('memos_count')">
+                メモ件数<v-icon class="ml-1 mb-1" :class="getIconStyle('memos_count')">{{
+                  getSortIcon('memos_count')
+                }}</v-icon>
+              </th>
               <th class="text-left">編集</th>
               <th class="text-left">削除</th>
             </tr>
@@ -88,7 +106,15 @@
           <tbody>
             <tr v-for="task in tasks" :key="task.id" :class="{ 'bg-lightgray': task.completed_at }">
               <td>
-                <v-checkbox :modelValue="!!task.completed_at" @update:modelValue="changeTaskCompletionState(task)" hide-details>
+                <v-checkbox
+                  :modelValue="!!task.completed_at"
+                  @update:modelValue="
+                    e => {
+                      changeTaskCompletionState(e, task);
+                    }
+                  "
+                  hide-details
+                >
                 </v-checkbox>
               </td>
               <td>{{ !!task.title ? task.title : '' }}</td>
@@ -116,7 +142,7 @@
           </div>
         </v-table>
         <div class="d-flex justify-end mt-2 mb-6">
-            <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
+          <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
         </div>
         <div>
           <v-row justify="center">
@@ -156,6 +182,13 @@
   .success_alert_message div {
     display: flex;
   }
+  .th_hover:hover {
+    cursor: pointer;
+  }
+  .th_hover:hover i {
+    opacity: 1;
+    cursor: pointer;
+  }
 </style>
 
 <script>
@@ -191,6 +224,10 @@
         statusItems: ['完了', '未完了'],
         displaySearchBox: false,
 
+        sortColumnName: '',
+        sortColumnStatus: false,
+        sortColumnData: [],
+
         // 多重送信防止フラグ
         isDisabled: false,
         // alert関連
@@ -206,18 +243,41 @@
       this.fetchCategories();
       this.fetchTasks();
     },
+
     methods: {
       dateFormat,
+
+      // 並び替え
+      sortble(columnName) {
+        // ソート中のデータとソートしたいデータが同じ
+        // ソート中のソートステータスがtrueの時反転する
+        if (columnName == this.sortColumnName || this.sortColumnStatus) {
+          this.sortColumnStatus = !this.sortColumnStatus;
+        }
+        this.sortColumnName = columnName;
+        this.fetchTasks();
+      },
+
+      getSortIcon(columnName) {
+        return this.sortColumnName == columnName && this.sortColumnStatus == false ? 'mdi-arrow-down' : 'mdi-arrow-up';
+      },
+
+      getIconStyle(columnName) {
+        return this.sortColumnName == columnName ? 'text-black' : 'text-grey-lighten-1 opacity-0';
+      },
+
       fetchTasks() {
         const selectedStatus = this.selectedStatus;
         const keyword = this.keyword_search;
         const category = this.selectedCategory;
+        const sortColumnData = [this.sortColumnName, this.sortColumnStatus];
         axios
           .get('/api/v1/tasks', {
             params: {
               status: selectedStatus,
               keyword: keyword,
               category: category,
+              column: sortColumnData,
             },
           })
           .then(res => {
@@ -351,8 +411,8 @@
       },
 
       // 完了・未完了切り替え
-      changeTaskCompletionState  (task) {
-        task.completed_at == null ? this.complete(task.id) : this.cancel(task.id);
+      changeTaskCompletionState(complete_status, task) {
+        complete_status ? this.complete(task.id) : this.cancel(task.id);
       },
     },
   };

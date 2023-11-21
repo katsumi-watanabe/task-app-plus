@@ -13,6 +13,7 @@ class Task extends Model
 
     protected $fillable = ['title', 'category_id', 'description', 'due_date', 'completed_at', 'deleted_at'];
     protected $casts = ['completed_at' => 'date:Y/m/d', 'due_date' => 'date:Y-m-d'];
+    protected $sortValidationColumns = ['status', 'category', 'due_date', 'completed_at', 'memos_count'];
     /*
     リレーション
     */
@@ -36,6 +37,29 @@ class Task extends Model
     {
         $this->completed_at = null;
         $this->save();
+    }
+
+    // 並び替え
+    public function isSortStatus($sortStatus)
+    {
+        return $sortStatus == 'true' ? 'ASC' : 'DESC';
+    }
+    public function isSortValidationColumn($columnName)
+    {
+        return in_array($columnName, $this->sortValidationColumns);
+    }
+
+    /*
+    Scope
+    */
+    public function scopeOrderByColumn($query, $sortArrayData)
+    {
+        $columnName = $sortArrayData[0];
+        $sortStatus = $sortArrayData[1];
+
+        $this->isSortValidationColumn($columnName);
+
+        return $query->orderBy($columnName, $this->isSortStatus($sortStatus));
     }
 
     public function scopeOrderByDefault($query)

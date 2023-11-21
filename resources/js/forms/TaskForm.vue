@@ -1,5 +1,5 @@
 <template>
-  <v-card width="90vh" height="90vh" style="overflow: scroll">
+  <v-card width="800px" style="overflow: scroll">
     <v-card-title>
       <span class="text-h5">{{ getFormTitle }}</span>
       <v-spacer></v-spacer>
@@ -25,14 +25,14 @@
           </v-col>
         </v-row>
         <v-row>
-            <v-col cols="6">
-                <v-text-field label="期日" type="date" v-model="currentTask.due_date"> </v-text-field>
-            </v-col>
+          <v-col cols="6">
+            <v-text-field label="期日" type="date" v-model="currentTask.due_date"> </v-text-field>
+          </v-col>
         </v-row>
         <v-row>
-            <v-col cols="12">
-                <v-textarea label="内容" v-model="currentTask.description"></v-textarea>
-            </v-col>
+          <v-col cols="12">
+            <v-textarea label="内容" v-model="currentTask.description"></v-textarea>
+          </v-col>
         </v-row>
 
         <v-card-text v-if="isNew == false">
@@ -90,9 +90,9 @@
       },
     },
     computed: {
-        getFormTitle() {
-            return this.isNew ? 'タスク新規登録画面' : 'タスク編集画面';
-        }
+      getFormTitle() {
+        return this.isNew ? 'タスク新規登録画面' : 'タスク編集画面';
+      },
     },
     methods: {
       confirmTask() {

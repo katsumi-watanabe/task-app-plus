@@ -66,13 +66,15 @@
 
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue" type="submit"> 検索 </v-btn>
+              <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue" type="submit">
+                検索
+              </v-btn>
               <v-btn prepend-icon="mdi-refresh" @click="reset"> リセット </v-btn>
             </v-col>
           </v-row>
         </div>
 
-        <v-table fixed-header height="auto" style="position: relative">
+        <v-table fixed-header height="600px" style="position: relative">
           <thead>
             <tr>
               <th class="text-left th_hover">ステータス<v-icon class="ml-1 mb-1"></v-icon></th>
@@ -144,18 +146,16 @@
           <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
         </div>
         <div>
-          <v-row justify="center">
-            <v-dialog v-model="taskFormDialog" width="auto">
-              <TaskForm
-                :isNew="isNewTask"
-                :task="selectedTask"
-                :categories="categories"
-                @cancel="this.taskFormDialog = false"
-                @create="confirmNewTask"
-                @update="confirmUpdateTask"
-              ></TaskForm>
-            </v-dialog>
-          </v-row>
+          <v-dialog v-model="taskFormDialog" width="auto">
+            <TaskForm
+              :isNew="isNewTask"
+              :task="selectedTask"
+              :categories="categories"
+              @cancel="this.taskFormDialog = false"
+              @create="confirmNewTask"
+              @update="confirmUpdateTask"
+            ></TaskForm>
+          </v-dialog>
         </div>
       </v-container>
     </v-main>

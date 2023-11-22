@@ -1,5 +1,4 @@
 <template>
-  <v-app class="d-block">
     <v-app-bar color="indigo">
       <template v-slot:prepend>
         <v-btn class="bg-info" @click="changeDisplay">
@@ -9,7 +8,6 @@
       </template>
 
       <v-app-bar-title> タスク管理一覧 </v-app-bar-title>
-      <button @click="categoryLinkPage">カテゴリページに飛びます</button>
 
       <template v-slot:append>
         <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
@@ -160,8 +158,6 @@
       </v-container>
     </v-main>
 
-    <v-footer color="indigo" app> Footer </v-footer>
-  </v-app>
 </template>
 
 <style>
@@ -195,20 +191,8 @@
   import TaskForm from './forms/TaskForm.vue';
   import CategoryList from './lists/CategoryList.vue';
   import { dateFormat } from './dateFormat.js';
-  import { useRouter } from 'vue-router';
 
   export default {
-    setup() {
-      const router = useRouter();
-
-      function categoryLinkPage() {
-        router.push('/category');
-      }
-
-      return {
-        categoryLinkPage,
-      };
-    },
     components: {
       DeleteButton,
       CategoryList,

@@ -9,10 +9,10 @@
       </template>
 
       <v-app-bar-title> タスク管理一覧 </v-app-bar-title>
+      <button @click="categoryLinkPage">カテゴリページに飛びます</button>
 
       <template v-slot:append>
         <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
-
         <v-btn class="bg-success white ml-8" @click="createTask">
           <v-icon> mdi-plus-circle-outline </v-icon>
           新規登録
@@ -195,8 +195,20 @@
   import TaskForm from './forms/TaskForm.vue';
   import CategoryList from './lists/CategoryList.vue';
   import { dateFormat } from './dateFormat.js';
+  import { useRouter } from 'vue-router';
 
   export default {
+    setup() {
+      const router = useRouter();
+
+      function categoryLinkPage() {
+        router.push('/category');
+      }
+
+      return {
+        categoryLinkPage,
+      };
+    },
     components: {
       DeleteButton,
       CategoryList,

@@ -1,8 +1,9 @@
 import './bootstrap';
 import { createApp } from 'vue';
+import router from './router'
 import PreventDoubleClickDirective from './directives/prevent-double-click.js';
 
-import Task from './Task.vue';
+import App from './App.vue';
 
 // Vuetify 使用時に必要なライブラリのインポート
 import 'vuetify/styles';
@@ -10,6 +11,7 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
+// lodash ライブラリのインポート
 import _ from 'lodash'
 
 // jsにアイコンフォント(mdi)を埋め込む場合に必要
@@ -29,7 +31,8 @@ const vuetify = createVuetify({
   }
 });
 // Vueアプリケーションインスタンスの作成
-const app = createApp(Task);
+const app = createApp(App);
 app.directive('prevent-double-click', PreventDoubleClickDirective);
+app.use(router);
 app.use(vuetify);
 app.mount('#app');

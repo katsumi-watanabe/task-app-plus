@@ -54,8 +54,8 @@
             <v-text-field
               class="bg-white"
               label="フリーワード検索"
-              name="keyword_search"
-              v-model="keyword_search"
+              name="keywordSearch"
+              v-model="keywordSearch"
               hide-details="auto"
               @keyup.enter="fetchTasks"
             ></v-text-field>
@@ -213,7 +213,7 @@
 
         // 検索関連
         selectedStatus: [],
-        keyword_search: '',
+        keywordSearch: '',
         selectedCategory: [],
         statusItems: ['完了', '未完了'],
         displaySearchBox: false,
@@ -231,6 +231,13 @@
         messageTaskId: {},
       };
     },
+
+    created() {
+      this.selectedStatus = this.$store.state.selectedStatus;
+      this.selectedCategory = this.$store.state.selectedCategory;
+      this.keywordSearch = this.$store.state.keywordSearch;
+    },
+
     mounted() {
       this.fetchCategories();
       this.fetchTasks();
@@ -258,8 +265,10 @@
       },
 
       fetchTasks() {
+        // Vuexに入れる処理も書く
+        // 絞り込みされた状態を表示
         const selectedStatus = this.selectedStatus;
-        const keyword = this.keyword_search;
+        const keyword = this.keywordSearch;
         const category = this.selectedCategory;
         const sortColumnData = [this.sortColumnName, this.sortColumnStatus];
         axios
@@ -355,7 +364,7 @@
 
       reset() {
         this.selectedStatus = [];
-        this.keyword_search = '';
+        this.keywordSearch = '';
         this.selectedCategory = [];
         this.fetchTasks();
       },

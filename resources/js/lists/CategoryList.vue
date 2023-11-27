@@ -1,7 +1,6 @@
 <template>
   <div>
-    <v-row justify="center">
-      <v-btn class="bg-grey white" @click="categoryListParentDialog = true"> カテゴリ一覧 </v-btn>
+      <v-btn class="mx-3 bg-grey white" @click="categoryListParentDialog = true"> カテゴリ一覧 </v-btn>
       <!-- メソッド名修正 -->
       <v-dialog v-model="categoryListParentDialog" width="800px">
         <v-card>
@@ -55,7 +54,6 @@
         >
         </CategoryForm>
       </v-dialog>
-    </v-row>
   </div>
 </template>
 <script>

@@ -1,17 +1,16 @@
 <template>
   <v-app-bar color="indigo">
-    <template v-slot:prepend>
-      <v-btn class="bg-info" @click="changeDisplay">
-        <v-icon>mdi-filter</v-icon>
-        フィルター
-      </v-btn>
-    </template>
+    <template v-slot:prepend> </template>
 
     <v-app-bar-title> <router-link to="/"> タスク管理一覧 </router-link></v-app-bar-title>
 
     <template v-slot:append>
+      <v-btn class="bg-info" @click="changeDisplay">
+        <v-icon>mdi-filter</v-icon>
+        フィルター
+      </v-btn>
       <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
-      <v-btn class="bg-success white ml-8" @click="createTask">
+      <v-btn class="bg-success white" @click="createTask">
         <v-icon> mdi-plus-circle-outline </v-icon>
         新規登録
       </v-btn>
@@ -236,6 +235,7 @@
       this.selectedStatus = this.$store.state.selectedStatus;
       this.selectedCategory = this.$store.state.selectedCategory;
       this.keywordSearch = this.$store.state.keywordSearch;
+      this.displaySearchBox = this.$store.state.displaySearchBox;
     },
 
     mounted() {

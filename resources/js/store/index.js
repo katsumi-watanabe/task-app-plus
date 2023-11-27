@@ -16,6 +16,9 @@ export default createStore({
     setKeyword(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
     },
+    setDisplaySearchBox(state, displaySearchBox) {
+      state.displaySearchBox = displaySearchBox;
+    },
   },
   actions: {
     updateStatus({ commit }, selectedStatus) {
@@ -26,6 +29,9 @@ export default createStore({
     },
     updateKeyword({ commit }, keywordSearch) {
       commit('setKeyword', keywordSearch);
+    },
+    updateDisplaySearchBox({ commit }, displaySearchBox) {
+      commit('setDisplaySearchBox', displaySearchBox);
     },
   },
 });

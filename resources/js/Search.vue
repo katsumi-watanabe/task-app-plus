@@ -82,6 +82,10 @@
         this.$store.dispatch('updateStatus', this.selectedStatus);
         this.$store.dispatch('updateCategories', this.selectedCategory);
         this.$store.dispatch('updateKeyword', this.keywordSearch);
+        // 検索ボックスの表示状態の決定
+        this.displaySearchBox =
+          this.selectedStatus.length > 0 || this.selectedCategory.length > 0 || this.keywordSearch.length > 0;
+        this.$store.dispatch('updateDisplaySearchBox', this.displaySearchBox);
         this.$router.push({ path: '/' });
       },
     },

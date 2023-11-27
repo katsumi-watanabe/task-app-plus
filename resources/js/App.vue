@@ -3,7 +3,7 @@
       <router-view></router-view>
     <Footer
     @homePage="homePage"
-    @categoryPage="categoryPage"
+    @searchPage="searchPage"
     ></Footer>
   </v-app>
 </template>
@@ -19,12 +19,12 @@
       function homePage() {
         router.push('/');
       }
-      function categoryPage() {
-        router.push('/category');
+      function searchPage() {
+        router.push('/search');
       }
       return {
         homePage,
-        categoryPage,
+        searchPage,
       };
     },
     components: {

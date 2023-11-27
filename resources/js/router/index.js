@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TaskVue from '../Task.vue';
-import CategoryVue from '../Category.vue';
+import SearchVue from '../Search.vue';
 const routes = [
   {
     path: '/',
@@ -8,9 +8,9 @@ const routes = [
     component: TaskVue
   },
   {
-    path: '/category',
-    name: 'Category',
-    component: CategoryVue
+    path: '/search',
+    name: 'Search',
+    component: SearchVue
   },
 ];
 

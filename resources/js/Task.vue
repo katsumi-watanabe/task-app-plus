@@ -1,163 +1,162 @@
 <template>
-    <v-app-bar color="indigo">
-      <template v-slot:prepend>
-        <v-btn class="bg-info" @click="changeDisplay">
-          <v-icon>mdi-filter</v-icon>
-          フィルター
-        </v-btn>
-      </template>
+  <v-app-bar color="indigo">
+    <template v-slot:prepend>
+      <v-btn class="bg-info" @click="changeDisplay">
+        <v-icon>mdi-filter</v-icon>
+        フィルター
+      </v-btn>
+    </template>
 
-      <v-app-bar-title> タスク管理一覧 </v-app-bar-title>
+    <v-app-bar-title> <router-link to="/"> タスク管理一覧 </router-link></v-app-bar-title>
 
-      <template v-slot:append>
-        <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
-        <v-btn class="bg-success white ml-8" @click="createTask">
-          <v-icon> mdi-plus-circle-outline </v-icon>
-          新規登録
-        </v-btn>
-      </template>
-    </v-app-bar>
-    <v-main class="bg-indigo-lighten-5">
-      <v-container>
-        <div v-if="displaySearchBox == true">
-          <v-row>
-            <v-col cols="6">
-              <v-select
-                class="bg-white"
-                label="完了ステータス"
-                :items="statusItems"
-                v-model="selectedStatus"
-                hide-details="auto"
+    <template v-slot:append>
+      <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
+      <v-btn class="bg-success white ml-8" @click="createTask">
+        <v-icon> mdi-plus-circle-outline </v-icon>
+        新規登録
+      </v-btn>
+    </template>
+  </v-app-bar>
+  <v-main class="bg-indigo-lighten-5">
+    <v-container>
+      <div v-if="displaySearchBox == true">
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              class="bg-white"
+              label="完了ステータス"
+              :items="statusItems"
+              v-model="selectedStatus"
+              hide-details="auto"
+            >
+            </v-select>
+          </v-col>
+
+          <v-col cols="6">
+            <v-select
+              class="bg-white"
+              label="カテゴリ"
+              :items="categories"
+              item-title="name"
+              item-value="id"
+              name="category"
+              chips
+              multiple
+              v-model="selectedCategory"
+              hide-details="auto"
+            >
+            </v-select>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              class="bg-white"
+              label="フリーワード検索"
+              name="keyword_search"
+              v-model="keyword_search"
+              hide-details="auto"
+              @keyup.enter="fetchTasks"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+        <v-row class="mb-3">
+          <v-col cols="12">
+            <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue" type="submit">
+              検索
+            </v-btn>
+            <v-btn prepend-icon="mdi-refresh" @click="reset"> リセット </v-btn>
+          </v-col>
+        </v-row>
+      </div>
+
+      <v-table fixed-header height="600px" style="position: relative">
+        <thead>
+          <tr>
+            <th class="text-left th_hover">ステータス<v-icon class="ml-1 mb-1"></v-icon></th>
+            <th class="text-left th_hover" @click="sortble('title')">
+              タイトル<v-icon class="ml-1 mb-1" :class="getIconStyle('title')">{{ getSortIcon('title') }}</v-icon>
+            </th>
+            <th class="text-left th_hover" @click="sortble('category_id')">
+              カテゴリ<v-icon class="ml-1 mb-1" :class="getIconStyle('category_id')">{{
+                getSortIcon('category_id')
+              }}</v-icon>
+            </th>
+            <th class="text-left">内容</th>
+            <th class="text-left th_hover" @click="sortble('due_date')">
+              期日<v-icon class="ml-1 mb-1" :class="getIconStyle('due_date')">{{ getSortIcon('due_date') }}</v-icon>
+            </th>
+            <th class="text-left th_hover" @click="sortble('completed_at')">
+              完了日<v-icon class="ml-1 mb-1" :class="getIconStyle('completed_at')">{{
+                getSortIcon('completed_at')
+              }}</v-icon>
+            </th>
+            <th class="text-left th_hover" @click="sortble('memos_count')">
+              メモ件数<v-icon class="ml-1 mb-1" :class="getIconStyle('memos_count')">{{
+                getSortIcon('memos_count')
+              }}</v-icon>
+            </th>
+            <th class="text-left">編集</th>
+            <th class="text-left">削除</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="task in tasks" :key="task.id" :class="{ 'bg-lightgray': task.completed_at }">
+            <td>
+              <v-checkbox
+                :modelValue="!!task.completed_at"
+                @update:modelValue="
+                  e => {
+                    changeTaskCompletionState(e, task);
+                  }
+                "
+                hide-details
               >
-              </v-select>
-            </v-col>
-
-            <v-col cols="6">
-              <v-select
-                class="bg-white"
-                label="カテゴリ"
-                :items="categories"
-                item-title="name"
-                item-value="id"
-                name="category"
-                chips
-                multiple
-                v-model="selectedCategory"
-                hide-details="auto"
-              >
-              </v-select>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                class="bg-white"
-                label="フリーワード検索"
-                name="keyword_search"
-                v-model="keyword_search"
-                hide-details="auto"
-                @keyup.enter="fetchTasks"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-
-          <v-row class="mb-3">
-            <v-col cols="12">
-              <v-btn prepend-icon="mdi-magnify" @click="fetchTasks" class="mr-5 bg-light-blue" type="submit">
-                検索
+              </v-checkbox>
+            </td>
+            <td>{{ !!task.title ? task.title : '' }}</td>
+            <td>{{ !!task.category ? task.category.name : '' }}</td>
+            <td>{{ !!task.description ? task.description : '' }}</td>
+            <td>{{ !!task.due_date ? dateFormat(task.due_date) : '-' }}</td>
+            <td>{{ !!task.completed_at ? dateFormat(task.completed_at) : '-' }}</td>
+            <td>{{ task.memos_count }}</td>
+            <td>
+              <v-btn class="bg-success white" @click="updateTask(task)">
+                <v-icon>mdi-table-edit</v-icon>
               </v-btn>
-              <v-btn prepend-icon="mdi-refresh" @click="reset"> リセット </v-btn>
-            </v-col>
-          </v-row>
+            </td>
+            <td>
+              <DeleteButton :id="task.id" @delete="confirmDelete"></DeleteButton>
+            </td>
+          </tr>
+        </tbody>
+        <div class="success_alert_message">
+          <v-alert v-model="alert" color="success" icon="$success" :text="taskMessage">
+            <div class="ml-3 px-3" role="button" @click="cancel(messageTaskId)">
+              <v-icon color="#fff"> mdi mdi-keyboard-return </v-icon>
+            </div>
+          </v-alert>
         </div>
-
-        <v-table fixed-header height="600px" style="position: relative">
-          <thead>
-            <tr>
-              <th class="text-left th_hover">ステータス<v-icon class="ml-1 mb-1"></v-icon></th>
-              <th class="text-left th_hover" @click="sortble('title')">
-                タイトル<v-icon class="ml-1 mb-1" :class="getIconStyle('title')">{{ getSortIcon('title') }}</v-icon>
-              </th>
-              <th class="text-left th_hover" @click="sortble('category_id')">
-                カテゴリ<v-icon class="ml-1 mb-1" :class="getIconStyle('category_id')">{{
-                  getSortIcon('category_id')
-                }}</v-icon>
-              </th>
-              <th class="text-left">内容</th>
-              <th class="text-left th_hover" @click="sortble('due_date')">
-                期日<v-icon class="ml-1 mb-1" :class="getIconStyle('due_date')">{{ getSortIcon('due_date') }}</v-icon>
-              </th>
-              <th class="text-left th_hover" @click="sortble('completed_at')">
-                完了日<v-icon class="ml-1 mb-1" :class="getIconStyle('completed_at')">{{
-                  getSortIcon('completed_at')
-                }}</v-icon>
-              </th>
-              <th class="text-left th_hover" @click="sortble('memos_count')">
-                メモ件数<v-icon class="ml-1 mb-1" :class="getIconStyle('memos_count')">{{
-                  getSortIcon('memos_count')
-                }}</v-icon>
-              </th>
-              <th class="text-left">編集</th>
-              <th class="text-left">削除</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="task in tasks" :key="task.id" :class="{ 'bg-lightgray': task.completed_at }">
-              <td>
-                <v-checkbox
-                  :modelValue="!!task.completed_at"
-                  @update:modelValue="
-                    e => {
-                      changeTaskCompletionState(e, task);
-                    }
-                  "
-                  hide-details
-                >
-                </v-checkbox>
-              </td>
-              <td>{{ !!task.title ? task.title : '' }}</td>
-              <td>{{ !!task.category ? task.category.name : '' }}</td>
-              <td>{{ !!task.description ? task.description : '' }}</td>
-              <td>{{ !!task.due_date ? dateFormat(task.due_date) : '-' }}</td>
-              <td>{{ !!task.completed_at ? dateFormat(task.completed_at) : '-' }}</td>
-              <td>{{ task.memos_count }}</td>
-              <td>
-                <v-btn class="bg-success white" @click="updateTask(task)">
-                  <v-icon>mdi-table-edit</v-icon>
-                </v-btn>
-              </td>
-              <td>
-                <DeleteButton :id="task.id" @delete="confirmDelete"></DeleteButton>
-              </td>
-            </tr>
-          </tbody>
-          <div class="success_alert_message">
-            <v-alert v-model="alert" color="success" icon="$success" :text="taskMessage">
-              <div class="ml-3 px-3" role="button" @click="cancel(messageTaskId)">
-                <v-icon color="#fff"> mdi mdi-keyboard-return </v-icon>
-              </div>
-            </v-alert>
-          </div>
-        </v-table>
-        <div class="d-flex justify-end mt-2 mb-6">
-          <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
-        </div>
-        <div>
-          <v-dialog v-model="taskFormDialog" width="auto">
-            <TaskForm
-              :isNew="isNewTask"
-              :task="selectedTask"
-              :categories="categories"
-              @cancel="this.taskFormDialog = false"
-              @create="confirmNewTask"
-              @update="confirmUpdateTask"
-            ></TaskForm>
-          </v-dialog>
-        </div>
-      </v-container>
-    </v-main>
-
+      </v-table>
+      <div class="d-flex justify-end mt-2 mb-6">
+        <v-pagination v-model="page" :length="length" :total-visible="2" @click="pageChange(page)"></v-pagination>
+      </div>
+      <div>
+        <v-dialog v-model="taskFormDialog" width="auto">
+          <TaskForm
+            :isNew="isNewTask"
+            :task="selectedTask"
+            :categories="categories"
+            @cancel="this.taskFormDialog = false"
+            @create="confirmNewTask"
+            @update="confirmUpdateTask"
+          ></TaskForm>
+        </v-dialog>
+      </div>
+    </v-container>
+  </v-main>
 </template>
 
 <style>

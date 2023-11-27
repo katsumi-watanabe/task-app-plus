@@ -8,7 +8,7 @@
     </template>
 
     <v-app-bar-title> タスク管理一覧 </v-app-bar-title>
-    <button @click="$emit('categoryPage')">カテゴリページに飛びます</button>
+    <button @click="$emit('searchPage')">検索ページに飛びます</button>
 
     <template v-slot:append>
       <CategoryList :categories="categories" @click="$emit('fetchCategories')"></CategoryList>

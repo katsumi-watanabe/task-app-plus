@@ -10,10 +10,13 @@
         フィルター
       </v-btn>
       <CategoryList :categories="categories" @click="fetchCategories"></CategoryList>
-      <v-btn class="bg-success white" @click="createTask">
-        <v-icon> mdi-plus-circle-outline </v-icon>
-        新規登録
-      </v-btn>
+
+      <router-link :to="{ name: 'TaskForm' }">
+        <v-btn class="bg-success white">
+          <v-icon> mdi-plus-circle-outline </v-icon>
+          新規登録
+        </v-btn>
+      </router-link>
     </template>
   </v-app-bar>
   <v-main class="bg-indigo-lighten-5">
@@ -122,9 +125,11 @@
             <td>{{ !!task.completed_at ? dateFormat(task.completed_at) : '-' }}</td>
             <td>{{ task.memos_count }}</td>
             <td>
-              <v-btn class="bg-success white" @click="updateTask(task)">
-                <v-icon>mdi-table-edit</v-icon>
-              </v-btn>
+              <router-link :to="{ name: 'EditTask', params: { id: task.id } }">
+                <v-btn class="bg-success white">
+                  <v-icon>mdi-table-edit</v-icon>
+                </v-btn>
+              </router-link>
             </td>
             <td>
               <DeleteButton :id="task.id" @delete="confirmDelete"></DeleteButton>
@@ -144,14 +149,14 @@
       </div>
       <div>
         <v-dialog v-model="taskFormDialog" width="auto">
-          <TaskForm
+          <!-- <TaskForm
             :isNew="isNewTask"
             :task="selectedTask"
             :categories="categories"
             @cancel="this.taskFormDialog = false"
             @create="confirmNewTask"
             @update="confirmUpdateTask"
-          ></TaskForm>
+          ></TaskForm> -->
         </v-dialog>
       </div>
     </v-container>
@@ -211,7 +216,7 @@
         selectedTask: '',
 
         // 検索関連
-        selectedStatus: [],
+        selectedStatus: '',
         keywordSearch: '',
         selectedCategory: [],
         statusItems: ['完了', '未完了'],
@@ -232,7 +237,7 @@
     },
 
     created() {
-      this.selectedStatus = this.$store.state.selectedStatus;
+      this.selectedStatus = this.$store.state.selectedStatus || '';
       this.selectedCategory = this.$store.state.selectedCategory;
       this.keywordSearch = this.$store.state.keywordSearch;
       this.displaySearchBox = this.$store.state.displaySearchBox;

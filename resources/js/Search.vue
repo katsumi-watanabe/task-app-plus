@@ -59,7 +59,7 @@
       return {
         categories: [],
         // 検索関連
-        selectedStatus: [],
+        selectedStatus: '',
         keywordSearch: '',
         selectedCategory: [],
         statusItems: ['完了', '未完了'],
@@ -79,6 +79,7 @@
 
     methods: {
       search() {
+        // console.log(this.selectedStatus);
         this.$store.dispatch('updateStatus', this.selectedStatus);
         this.$store.dispatch('updateCategories', this.selectedCategory);
         this.$store.dispatch('updateKeyword', this.keywordSearch);
